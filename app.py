@@ -90,11 +90,45 @@ def get_stats():
 @app.route('/download-report')
 def download_report():
     try:
+        # 1. Get accurate time
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        try: cpu, ram = psutil.cpu_percent(None), psutil.virtual_memory().percent
-        except: cpu, ram = 0, 0
-        report = f"SYSTEM REPORT\nDate: {now}\nCPU: {cpu}%\nRAM: {ram}%\nStats: {global_stats}"
-        return Response(report, mimetype="text/plain", headers={"Content-disposition": "attachment; filename=report.txt"})
+        
+        # 2. Get accurate system stats (interval=1 fixes the 0% CPU bug)
+        try: 
+            cpu = psutil.cpu_percent(interval=1)
+            ram = psutil.virtual_memory().percent
+        except: 
+            cpu, ram = 0, 0
+
+        # 3. Create a clean, formatted report string
+        report = f"""
+========================================
+       AI WORKSPACE SYSTEM REPORT       
+========================================
+Generated On: {now}
+
+[SYSTEM HEALTH]
+----------------------------------------
+CPU Load  : {cpu}%
+RAM Usage : {ram}%
+
+[TOOL USAGE STATISTICS]
+----------------------------------------
+• Text Generators      : {global_stats.get('text_gen', 0)}
+• Audio Generators     : {global_stats.get('audio_gen', 0)}
+• Audio Transcriptions : {global_stats.get('transcribe', 0)}
+• PDF Documents        : {global_stats.get('pdf_gen', 0)}
+• Image Analysis       : {global_stats.get('image_analysis', 0)}
+• Code Reviews         : {global_stats.get('code_review', 0)}
+• Chat Messages        : {global_stats.get('chat_msgs', 0)}
+• Quizzes Generated    : {global_stats.get('quiz_gen', 0)}
+• Video Summaries      : {global_stats.get('video_sum', 0)}
+• File Conversions     : {global_stats.get('file_conv', 0)}
+• Image Compressions   : {global_stats.get('compression', 0)}
+• Video to Audio       : {global_stats.get('vid_audio', 0)}
+========================================
+"""
+        return Response(report, mimetype="text/plain", headers={"Content-disposition": "attachment; filename=System_Report.txt"})
     except Exception as e: return str(e), 500
 
 @app.route('/chat', methods=['POST'])
