@@ -5,21 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Workspace Enterprise</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     
     <style>
         :root {
-            /* ENTERPRISE THEME */
-            --primary: #2563eb;
-            --primary-bg: #eff6ff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --bg-body: #f8fafc;
-            --border-color: #e2e8f0;
-            --sidebar-width: 260px;
+            /* MODERN PALETTE (Indigo & Slate) */
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-sidebar: #ffffff;
+            
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-subtle: #f3f4f6; /* Very light for separation */
+            
+            --sidebar-width: 280px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            --radius-card: 16px;
+            --radius-btn: 10px;
         }
 
         body {
@@ -28,53 +40,73 @@
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: white;
+            background-color: var(--bg-sidebar);
             height: 100vh;
             position: fixed;
             left: 0; top: 0;
             display: flex; flex-direction: column;
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid #e5e7eb;
             z-index: 1000;
         }
 
         .brand {
-            padding: 1.5rem;
-            font-size: 1.2rem;
+            padding: 2rem 1.5rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: var(--primary);
             display: flex; align-items: center; gap: 12px;
-            border-bottom: 1px solid var(--border-color);
+            letter-spacing: -0.5px;
             cursor: pointer;
-            transition: color 0.2s;
         }
-        .brand:hover { color: #1e40af; }
-
-        .nav-section { padding: 1rem 0.8rem; flex-grow: 1; overflow-y: auto; }
+        
+        .nav-section { 
+            padding: 0 1rem; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            scrollbar-width: thin;
+        }
+        
+        /* Custom Scrollbar for sidebar */
+        .nav-section::-webkit-scrollbar { width: 4px; }
+        .nav-section::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
 
         .nav-label {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 0.8px; color: #94a3b8; font-weight: 700;
-            margin: 1.5rem 0 0.5rem 0.8rem;
+            font-size: 0.75rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px; 
+            color: #9ca3af; 
+            font-weight: 700;
+            margin: 1.5rem 0 0.75rem 0.5rem;
         }
 
         .nav-pills .nav-link {
             color: var(--text-muted);
-            font-weight: 600;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.25rem;
-            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.85rem 1rem;
+            margin-bottom: 4px;
+            border-radius: var(--radius-btn);
             display: flex; align-items: center;
             transition: all 0.2s ease;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
-        .nav-pills .nav-link:hover { background-color: var(--bg-body); color: var(--primary); }
-        .nav-pills .nav-link.active { background-color: var(--primary-bg); color: var(--primary); }
+        .nav-pills .nav-link:hover { 
+            background-color: #f9fafb; 
+            color: var(--text-main); 
+            transform: translateX(3px);
+        }
+        
+        .nav-pills .nav-link.active { 
+            background-color: var(--primary-light); 
+            color: var(--primary); 
+            font-weight: 600;
+        }
 
         .nav-pills .nav-link i { 
             width: 24px; text-align: center; margin-right: 12px; font-size: 1.1em; 
@@ -89,105 +121,185 @@
         }
 
         .header-bar {
-            background: white;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px); /* Glassmorphism */
+            padding: 1.2rem 2.5rem;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 900;
         }
 
         .content-area { 
-            padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; 
+            padding: 2.5rem; 
+            max-width: 1600px; 
+            margin: 0 auto; 
+            width: 100%; 
         }
 
         /* --- CARDS & WIDGETS --- */
         .welcome-banner {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            border-radius: var(--radius-card);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
         }
+        
+        .welcome-banner h2 { font-weight: 800; letter-spacing: -1px; }
+        .welcome-banner p { color: rgba(255,255,255, 0.9); }
+        .welcome-banner .btn { background: white; color: var(--primary); border: none; font-weight: 600; }
 
         .card-box {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-card);
+            /* REPLACED BORDER WITH SHADOW */
+            border: 1px solid rgba(229, 231, 235, 0.5); 
+            box-shadow: var(--shadow-md);
+            border-radius: var(--radius-card);
+            padding: 2rem;
             height: 100%;
             display: flex; flex-direction: column; justify-content: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-box.tool-btn {
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
         .card-box.tool-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
-            border-color: var(--primary);
-            cursor: pointer;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
         }
 
         .tool-icon-circle {
-            width: 50px; height: 50px;
-            background: var(--primary-bg);
+            width: 60px; height: 60px;
+            background: var(--primary-light);
             color: var(--primary);
-            border-radius: 12px;
+            border-radius: 50%; /* Fully round */
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem;
-            margin: 0 auto 1rem auto;
+            font-size: 1.5rem;
+            margin: 0 auto 1.2rem auto;
+            transition: transform 0.3s;
+        }
+        
+        .card-box.tool-btn:hover .tool-icon-circle {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--primary);
+            color: white;
         }
 
         /* --- FORMS --- */
         .form-control, .form-select {
-            background-color: #fcfcfc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius-btn);
+            padding: 0.85rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
         }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .btn-primary { background-color: var(--primary); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; }
-        .btn-primary:hover { background-color: #1d4ed8; }
+        .form-control:focus, .form-select:focus { 
+            background-color: white;
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); 
+        }
+        
+        .btn-primary { 
+            background-color: var(--primary); 
+            border: none; 
+            padding: 0.85rem 1.8rem; 
+            border-radius: var(--radius-btn); 
+            font-weight: 600; 
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px rgba(79, 70, 229, 0.3);
+        }
 
         /* --- CHAT WIDGET --- */
         .floating-chat-btn {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 60px; height: 60px;
-            background-color: var(--primary);
+            position: fixed; bottom: 35px; right: 35px;
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
             color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 24px; cursor: pointer; z-index: 2000;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            font-size: 26px; cursor: pointer; z-index: 2000;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
             transition: transform 0.2s;
         }
-        .floating-chat-btn:hover { transform: scale(1.05); }
+        .floating-chat-btn:hover { transform: scale(1.1); }
 
         .chat-window {
-            position: fixed; bottom: 100px; right: 30px;
-            width: 360px; height: 500px;
-            background: white; border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: fixed; bottom: 110px; right: 35px;
+            width: 380px; height: 550px;
+            background: white; 
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
             display: none; flex-direction: column;
             z-index: 2000; overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .chat-header { background: white; border-bottom: 1px solid var(--border-color); padding: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-        .chat-body { flex-grow: 1; padding: 20px; background: #f9fafb; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; line-height: 1.5; }
-        .chat-msg-ai { background: white; border: 1px solid var(--border-color); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-msg-user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-footer { padding: 15px; background: white; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .chat-header { 
+            background: var(--primary); 
+            color: white;
+            padding: 18px; 
+            font-weight: 700; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .chat-header button { color: white; opacity: 0.8; }
+        .chat-header button:hover { opacity: 1; }
+        
+        .chat-body { flex-grow: 1; padding: 20px; background: #f9fafb; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        
+        .chat-msg { 
+            max-width: 80%; 
+            padding: 12px 16px; 
+            border-radius: 18px; 
+            font-size: 0.95rem; 
+            line-height: 1.5; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .chat-msg-ai { 
+            background: white; 
+            color: var(--text-main);
+            border-bottom-left-radius: 4px; 
+        }
+        .chat-msg-user { 
+            background: var(--primary); 
+            color: white; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 4px; 
+        }
+        .chat-footer { padding: 15px; background: white; border-top: 1px solid var(--border-subtle); display: flex; gap: 10px; }
 
         /* EDITOR & UTILS */
-        #editor-container { height: 300px; background: white; }
-        pre { background: #f1f5f9; padding: 15px; border-radius: 8px; font-size: 0.9em; white-space: pre-wrap; }
+        #editor-container { height: 350px; background: white; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: 0; }
+        .ql-toolbar { border-radius: 12px 12px 0 0; border-color: #e5e7eb !important; background: #f9fafb; }
+        .ql-container { border-color: #e5e7eb !important; border-radius: 0 0 12px 12px; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-size: 0.85em; }
+
+        /* CPU Bar */
+        .bottom-stats {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="brand" onclick="document.getElementById('v-pills-home-tab').click()">
-            <i class="fas fa-cube"></i> AI Workspace
+            <i class="fas fa-cube fa-lg"></i> AI Workspace
         </div>
         
         <div class="nav-section">
@@ -249,13 +361,13 @@
             </div>
         </div>
 
-        <div class="p-3 border-top">
+        <div class="bottom-stats">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small fw-bold text-muted">CPU LOAD</span>
+                <span class="small fw-bold text-muted">SYSTEM LOAD</span>
                 <span class="small fw-bold text-dark" id="cpu-load-text">0%</span>
             </div>
-            <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-primary" id="cpu-bar" style="width: 0%"></div>
+            <div class="progress" style="height: 6px; border-radius: 3px; background-color: #e5e7eb;">
+                <div class="progress-bar bg-primary" id="cpu-bar" style="width: 0%; border-radius: 3px;"></div>
             </div>
             <div class="form-check form-switch mt-3">
                 <input class="form-check-input" type="checkbox" id="useDemoToggle">
@@ -266,8 +378,12 @@
 
     <main class="main-content">
         <header class="header-bar">
-            <div><h5 class="mb-0 fw-bold">Overview</h5></div>
-            <div><small class="text-muted" id="currentDate">Loading...</small></div>
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="mb-0 fw-bold text-dark">Dashboard</h4>
+            </div>
+            <div>
+                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill fw-normal" id="currentDate">Loading...</span>
+            </div>
         </header>
 
         <div class="content-area">
@@ -276,11 +392,11 @@
                 <div class="tab-pane fade show active" id="v-pills-home">
                     <div class="welcome-banner">
                         <div>
-                            <h2 class="fw-bold mb-1">Welcome back</h2>
-                            <p class="text-muted mb-0">System is ready. All 14 tools are active.</p>
+                            <h2 class="mb-2">Welcome Back</h2>
+                            <p class="mb-0 text-white-50">System is operational. All 14 AI models are ready.</p>
                         </div>
                         <div>
-                            <a href="/download-report" class="btn btn-outline-primary">
+                            <a href="/download-report" class="btn btn-light text-primary px-4 py-2 rounded-pill shadow-sm">
                                 <i class="fas fa-file-download me-2"></i>Download Report
                             </a>
                         </div>
@@ -289,48 +405,52 @@
                     <div class="row g-4 mb-5">
                         <div class="col-lg-8">
                             <div class="card-box">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold mb-0 text-muted">SYSTEM ACTIVITY</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-dark">System Activity</h6>
+                                        <small class="text-muted">Real-time CPU & Memory usage</small>
+                                    </div>
                                 </div>
-                                <div style="height: 250px;"><canvas id="systemChart"></canvas></div>
+                                <div style="height: 300px;"><canvas id="systemChart"></canvas></div>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="card-box">
-                                <h6 class="fw-bold mb-3 text-muted">TOOL USAGE</h6>
+                                <h6 class="fw-bold mb-1 text-dark">Tool Usage</h6>
+                                <small class="text-muted d-block mb-4">Distribution of AI requests</small>
                                 <div style="height: 250px; position: relative;"><canvas id="modelChart"></canvas></div>
                             </div>
                         </div>
                     </div>
 
-                    <h6 class="fw-bold mb-3 text-muted">QUICK ACTIONS</h6>
+                    <h5 class="fw-bold mb-3 text-dark">Quick Actions</h5>
                     <div class="row g-4">
                         <div class="col-md-3">
-                            <div class="card-box tool-btn text-center" onclick="document.getElementById('v-pills-compress-tab').click()">
+                            <div class="card-box tool-btn" onclick="document.getElementById('v-pills-compress-tab').click()">
                                 <div class="tool-icon-circle"><i class="fas fa-compress-arrows-alt"></i></div>
                                 <h6 class="fw-bold mb-1">Compressor</h6>
-                                <small class="text-muted">Reduce Size</small>
+                                <small class="text-muted">Optimize Images</small>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card-box tool-btn text-center" onclick="document.getElementById('v-pills-vidaudio-tab').click()">
+                            <div class="card-box tool-btn" onclick="document.getElementById('v-pills-vidaudio-tab').click()">
                                 <div class="tool-icon-circle"><i class="fas fa-music"></i></div>
                                 <h6 class="fw-bold mb-1">Vid to Audio</h6>
                                 <small class="text-muted">Extract MP3</small>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card-box tool-btn text-center" onclick="document.getElementById('v-pills-convert-tab').click()">
+                            <div class="card-box tool-btn" onclick="document.getElementById('v-pills-convert-tab').click()">
                                 <div class="tool-icon-circle"><i class="fas fa-exchange-alt"></i></div>
                                 <h6 class="fw-bold mb-1">Converter</h6>
-                                <small class="text-muted">Change Format</small>
+                                <small class="text-muted">Switch Formats</small>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="card-box tool-btn text-center" onclick="document.getElementById('v-pills-ppt-tab').click()">
+                            <div class="card-box tool-btn" onclick="document.getElementById('v-pills-ppt-tab').click()">
                                 <div class="tool-icon-circle"><i class="fas fa-desktop"></i></div>
                                 <h6 class="fw-bold mb-1">Slides Maker</h6>
-                                <small class="text-muted">Generate PPT</small>
+                                <small class="text-muted">Generate PPTX</small>
                             </div>
                         </div>
                     </div>
@@ -340,8 +460,10 @@
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Meeting Minutes Generator</h4>
                         <form id="minutesForm">
-                            <div class="mb-3"><textarea class="form-control" name="notes" rows="8" placeholder="Paste rough notes here..."></textarea></div>
-                            <button type="submit" class="btn btn-primary">Generate Minutes</button>
+                            <div class="mb-3"><textarea class="form-control" name="notes" rows="8" placeholder="Paste rough notes, transcript, or bullet points here..."></textarea></div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Generate Minutes</button>
+                            </div>
                         </form>
                         <div id="minutesOutput" class="mt-4"></div>
                     </div>
@@ -352,14 +474,14 @@
                         <h4 class="fw-bold mb-4">Presentation Generator</h4>
                         <form id="makePptForm">
                             <div class="row mb-3">
-                                <div class="col-md-8"><input type="text" class="form-control" name="topic" placeholder="Presentation Topic"></div>
+                                <div class="col-md-8"><label class="form-label">Topic</label><input type="text" class="form-control" name="topic" placeholder="e.g. Q4 Sales Strategy"></div>
                                 <div class="col-md-4">
-                                    <label class="form-label small text-muted">TEMPLATE (.pptx) - Optional</label>
+                                    <label class="form-label">Template (Optional)</label>
                                     <input type="file" class="form-control" name="template_file" accept=".pptx">
                                 </div>
                             </div>
-                            <div class="mb-3"><textarea class="form-control" name="source_text" rows="3" placeholder="Context..."></textarea></div>
-                            <button type="submit" class="btn btn-primary">Create Slides</button>
+                            <div class="mb-3"><label class="form-label">Context / Source Material</label><textarea class="form-control" name="source_text" rows="4" placeholder="Paste content to base the slides on..."></textarea></div>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Create Slides</button></div>
                         </form>
                         <div id="pptOutput" class="mt-4"></div>
                     </div>
@@ -367,9 +489,9 @@
 
                 <div class="tab-pane fade" id="v-pills-pdf">
                     <div class="card-box">
-                        <div class="d-flex justify-content-between mb-4"><h4 class="fw-bold">Document Editor</h4><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="translateCheck"><label class="form-check-label ms-2">Translate?</label></div></div>
+                        <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold m-0">Document Editor</h4><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="translateCheck"><label class="form-check-label ms-2">Translate Output?</label></div></div>
                         <div class="mb-3" id="pdfLangSelect" style="display:none;"><select class="form-select language-list" name="target_language"></select></div>
-                        <form id="textToPdfForm"><div id="editor-container"></div><input type="hidden" name="html_content" id="hiddenHtmlInput"><button type="submit" class="btn btn-primary mt-3">Download PDF</button></form>
+                        <form id="textToPdfForm"><div id="editor-container"></div><input type="hidden" name="html_content" id="hiddenHtmlInput"><div class="text-end mt-3"><button type="submit" class="btn btn-primary">Download as PDF</button></div></form>
                         <div id="pdfOutput" class="mt-4"></div>
                     </div>
                 </div>
@@ -379,10 +501,10 @@
                         <h4 class="fw-bold mb-4">Email Drafter</h4>
                         <form id="generateEmailForm">
                             <div class="row mb-3">
-                                <div class="col-md-6"><input type="text" class="form-control" name="recipient" placeholder="To"></div>
-                                <div class="col-md-6"><input type="text" class="form-control" name="topic" placeholder="Subject"></div>
+                                <div class="col-md-6"><label class="form-label">Recipient</label><input type="text" class="form-control" name="recipient" placeholder="e.g. The HR Team"></div>
+                                <div class="col-md-6"><label class="form-label">Key Topic</label><input type="text" class="form-control" name="topic" placeholder="e.g. Project Delay"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Draft Email</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Draft Email</button></div>
                         </form>
                         <div id="emailOutput" class="mt-4"></div>
                     </div>
@@ -392,9 +514,13 @@
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Vision Analyst</h4>
                         <form id="visionForm">
-                            <div class="mb-3"><label class="form-label">Upload Image</label><input type="file" class="form-control" name="image" accept="image/*" required></div>
-                            <div class="mb-3"><input type="text" class="form-control" name="prompt" placeholder="Ask something (e.g., 'Summarize this chart')"></div>
-                            <button type="submit" class="btn btn-primary">Analyze Image</button>
+                            <div class="mb-4 text-center p-5 border rounded-3 bg-light" style="border-style: dashed !important;">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-3"></i>
+                                <div class="mb-2"><input type="file" class="form-control w-50 mx-auto" name="image" accept="image/*" required></div>
+                                <small class="text-muted">Upload charts, diagrams, or photos</small>
+                            </div>
+                            <div class="mb-3"><label class="form-label">Prompt</label><input type="text" class="form-control" name="prompt" placeholder="Ask something (e.g., 'Summarize the data in this chart')"></div>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Analyze Image</button></div>
                         </form>
                         <div id="visionOutput" class="mt-4"></div>
                     </div>
@@ -402,20 +528,20 @@
 
                 <div class="tab-pane fade" id="v-pills-voice">
                     <div class="card-box">
-                        <h4 class="fw-bold mb-4">Text to Speech (Auto-Translate)</h4>
+                        <h4 class="fw-bold mb-4">Text to Speech</h4>
                         <form id="textToAudioForm">
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted fw-bold">INPUT LANGUAGE</label>
+                                    <label class="form-label">Input Language</label>
                                     <select class="form-select language-list-auto" name="source_language"></select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label small text-muted fw-bold">OUTPUT VOICE</label>
+                                    <label class="form-label">Target Voice</label>
                                     <select class="form-select language-list" name="target_language"></select>
                                 </div>
                             </div>
                             <div class="mb-3"><textarea class="form-control" name="text" rows="4" placeholder="Enter text in any language..."></textarea></div>
-                            <button type="submit" class="btn btn-primary">Generate Audio</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Generate Audio</button></div>
                         </form>
                         <div id="audioOutput" class="mt-4"></div>
                     </div>
@@ -425,9 +551,9 @@
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Audio Transcriber</h4>
                         <form id="audioToTextForm">
-                            <div class="mb-3"><label class="form-label">Audio Language</label><select class="form-select" id="speechLangSelect" name="language"></select></div>
-                            <div class="mb-3"><input type="file" class="form-control" name="file" accept=".wav"></div>
-                            <button type="submit" class="btn btn-primary">Start Transcription</button>
+                            <div class="mb-3"><label class="form-label">Spoken Language</label><select class="form-select" id="speechLangSelect" name="language"></select></div>
+                            <div class="mb-3"><label class="form-label">Upload Audio (WAV)</label><input type="file" class="form-control" name="file" accept=".wav"></div>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Start Transcription</button></div>
                         </form>
                         <div id="audioToTextOutput" class="mt-4"></div>
                     </div>
@@ -438,11 +564,11 @@
                         <h4 class="fw-bold mb-4">Translator</h4>
                         <form id="translateForm">
                             <div class="row mb-3">
-                                <div class="col-md-6"><select class="form-select language-list-auto" name="source_language"></select></div>
-                                <div class="col-md-6"><select class="form-select language-list" name="target_language"></select></div>
+                                <div class="col-md-6"><label class="form-label">From</label><select class="form-select language-list-auto" name="source_language"></select></div>
+                                <div class="col-md-6"><label class="form-label">To</label><select class="form-select language-list" name="target_language"></select></div>
                             </div>
-                            <div class="mb-3"><textarea class="form-control" name="text" rows="4"></textarea></div>
-                            <button type="submit" class="btn btn-primary">Translate</button>
+                            <div class="mb-3"><textarea class="form-control" name="text" rows="4" placeholder="Type text to translate..."></textarea></div>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Translate</button></div>
                         </form>
                         <div id="translateOutput" class="mt-4"></div>
                     </div>
@@ -451,17 +577,21 @@
                 <div class="tab-pane fade" id="v-pills-convert">
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Universal File Converter</h4>
-                        <div class="alert alert-info border-0 shadow-sm mb-4">
-                            <small><i class="fas fa-info-circle me-2"></i>Supports: PNG, JPG, WEBP, BMP -> Converts to your choice.</small>
+                        <div class="alert alert-light border shadow-sm mb-4 d-flex align-items-center">
+                            <i class="fas fa-info-circle text-primary me-3 fa-lg"></i>
+                            <div>
+                                <strong>Supported Inputs:</strong> PNG, JPG, WEBP, BMP<br>
+                                <small class="text-muted">Converts images to PDF, JPG, PNG, ICO, etc.</small>
+                            </div>
                         </div>
                         <form id="convertForm">
                             <div class="row mb-3">
                                 <div class="col-md-8">
-                                    <label class="form-label">Upload File (Image)</label>
+                                    <label class="form-label">Upload File</label>
                                     <input type="file" class="form-control" name="file" accept="image/*" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Target Format</label>
+                                    <label class="form-label">Convert To</label>
                                     <select class="form-select" name="format">
                                         <option value="PNG">PNG</option>
                                         <option value="JPG">JPG</option>
@@ -471,7 +601,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Convert File</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Convert File</button></div>
                         </form>
                         <div id="convertOutput" class="mt-4"></div>
                     </div>
@@ -483,9 +613,12 @@
                         <form id="youtubeForm">
                             <div class="mb-3">
                                 <label class="form-label">YouTube Video URL</label>
-                                <input type="text" class="form-control" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fab fa-youtube"></i></span>
+                                    <input type="text" class="form-control" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Summarize Video</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Summarize</button></div>
                         </form>
                         <div id="youtubeOutput" class="mt-4"></div>
                     </div>
@@ -505,9 +638,9 @@
                                     <input type="number" class="form-control" name="target_kb" placeholder="Ex: 500" value="500">
                                     <span class="input-group-text">KB</span>
                                 </div>
-                                <div class="form-text">We'll try to get as close to this size as possible.</div>
+                                <div class="form-text">The AI will attempt to reduce quality to meet this limit.</div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Compress Image</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Compress</button></div>
                         </form>
                         <div id="compressOutput" class="mt-4"></div>
                     </div>
@@ -516,15 +649,15 @@
                 <div class="tab-pane fade" id="v-pills-vidaudio">
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Video to Audio Converter</h4>
-                        <div class="alert alert-info border-0 shadow-sm">
-                            <small>Supports .mp4, .mov, .avi -> Converts to MP3</small>
+                        <div class="alert alert-light border shadow-sm mb-4">
+                            <i class="fas fa-film me-2 text-primary"></i> <strong>Supported:</strong> MP4, MOV, AVI &rarr; Output: MP3
                         </div>
                         <form id="vidAudioForm">
                             <div class="mb-3">
                                 <label class="form-label">Upload Video</label>
                                 <input type="file" class="form-control" name="file" accept="video/*" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Extract Audio (MP3)</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Extract Audio</button></div>
                         </form>
                         <div id="vidAudioOutput" class="mt-4"></div>
                     </div>
@@ -543,9 +676,9 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Topic or Content</label>
-                                <textarea class="form-control" name="topic" rows="5" placeholder="Paste content to generate a quiz..."></textarea>
+                                <textarea class="form-control" name="topic" rows="5" placeholder="Paste study notes or a topic here..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Generate Quiz</button>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Generate Quiz</button></div>
                         </form>
                         <div id="quizOutput" class="mt-4"></div>
                     </div>
@@ -555,8 +688,11 @@
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Code Reviewer</h4>
                         <form id="codeForm">
-                            <div class="mb-3"><label class="form-label">Paste Code</label><textarea class="form-control" name="code" rows="10" style="font-family: monospace;" placeholder="Paste code snippet..."></textarea></div>
-                            <button type="submit" class="btn btn-primary">Review Code</button>
+                            <div class="mb-3">
+                                <label class="form-label">Source Code</label>
+                                <textarea class="form-control" name="code" rows="10" style="font-family: 'Consolas', monospace; font-size: 14px; background: #282c34; color: #abb2bf;" placeholder="// Paste your code here for review..."></textarea>
+                            </div>
+                            <div class="text-end"><button type="submit" class="btn btn-primary">Analyze Code</button></div>
                         </form>
                         <div id="codeOutput" class="mt-4"></div>
                     </div>
@@ -567,20 +703,22 @@
     </main>
 
     <div class="floating-chat-btn" onclick="toggleChat()">
-        <i class="fas fa-comment-alt"></i>
+        <i class="fas fa-comment-dots"></i>
     </div>
 
     <div class="chat-window" id="chatWindow">
         <div class="chat-header">
-            <span>AI Assistant</span>
-            <button class="btn btn-sm" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-robot"></i> <span>AI Assistant</span>
+            </div>
+            <button class="btn btn-sm text-white" onclick="toggleChat()"><i class="fas fa-times"></i></button>
         </div>
         <div class="chat-body" id="chatBody">
-            <div class="chat-msg chat-msg-ai">Hello! How can I help you?</div>
+            <div class="chat-msg chat-msg-ai">Hello! I am your AI assistant. How can I help you navigate the tools today?</div>
         </div>
         <div class="chat-footer">
-            <input type="text" class="form-control border-0 bg-light" id="chatInput" placeholder="Message..." onkeypress="if(event.key==='Enter') sendChat()">
-            <button class="btn btn-primary rounded-circle" onclick="sendChat()"><i class="fas fa-arrow-up"></i></button>
+            <input type="text" class="form-control border-0 bg-light" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()">
+            <button class="btn btn-primary rounded-circle shadow-sm" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -591,24 +729,44 @@
 
     <script>
         // DATE
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 
         // CHARTS
         Chart.register(ChartDataLabels);
         const ctxSystem = document.getElementById('systemChart').getContext('2d');
         const systemChart = new Chart(ctxSystem, {
             type: 'line',
-            data: { labels: Array(20).fill(''), datasets: [{ label: 'CPU', data: Array(20).fill(0), borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.05)', borderWidth: 2, fill: true, pointRadius: 0, tension: 0.4 }] },
-            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { display: false } }, x: { grid: { display: false } } } }
+            data: { 
+                labels: Array(20).fill(''), 
+                datasets: [{ 
+                    label: 'CPU', 
+                    data: Array(20).fill(0), 
+                    borderColor: '#4f46e5', // Matches Primary
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)', 
+                    borderWidth: 2, 
+                    fill: true, 
+                    pointRadius: 0, 
+                    tension: 0.4 
+                }] 
+            },
+            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { display: true, borderDash: [5, 5] } }, x: { grid: { display: false } } } }
         });
 
         const ctxModel = document.getElementById('modelChart').getContext('2d');
         const modelChart = new Chart(ctxModel, {
             type: 'doughnut',
-            data: { labels: ['Text', 'Audio', 'Code', 'Vision', 'Chat'], datasets: [{ data: [1, 1, 1, 1, 1], backgroundColor: ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'], borderWidth: 0 }] },
-            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } }, datalabels: { display: false } } }
+            data: { 
+                labels: ['Text', 'Audio', 'Code', 'Vision', 'Chat'], 
+                datasets: [{ 
+                    data: [1, 1, 1, 1, 1], 
+                    backgroundColor: ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'], // Indigo Shades
+                    borderWidth: 0 
+                }] 
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20 } }, datalabels: { display: false } } }
         });
 
+        // --- KEEPING EXISTING LOGIC UNCHANGED BELOW ---
         async function updateStats() {
             try {
                 const response = await fetch('/api/stats');
@@ -645,12 +803,11 @@
             document.getElementById(formId).addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Handle specific case for PDF editor
                 if(formId === 'textToPdfForm') document.getElementById('hiddenHtmlInput').value = quill.root.innerHTML;
                 
                 const btn = this.querySelector('button[type="submit"]');
                 const originalBtnText = btn.innerHTML;
-                btn.innerHTML = 'Processing...'; 
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...'; 
                 btn.disabled = true;
                 
                 const formData = new FormData(this);
@@ -664,41 +821,36 @@
                     if(data.success) {
                         let content = '';
                         
-                        // 1. General File Download Link
-                        if(data.file_url) content += `<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i>Success! <a href="${data.file_url}" class="fw-bold" download>Download File</a></div>`;
+                        if(data.file_url) content += `<div class="alert alert-success border-0 shadow-sm d-flex align-items-center"><i class="fas fa-check-circle me-3 fa-lg"></i><div>Success! <a href="${data.file_url}" class="fw-bold text-decoration-none" download>Download Result</a></div></div>`;
                         
-                        // 2. Audio Player (For standard TTS, file conversion, OR Audio Transcribe)
                         if(data.file_url && (data.file_url.endsWith('.mp3') || data.file_url.endsWith('.wav'))) {
-                            content += `<div class="p-3 bg-white rounded shadow-sm border mt-2">
-                                <h6 class="text-muted small fw-bold">LISTEN TO UPLOAD:</h6>
+                            content += `<div class="p-3 bg-light rounded shadow-sm border mt-3">
+                                <h6 class="text-muted small fw-bold mb-2">AUDIO PREVIEW</h6>
                                 <audio controls class="w-100"><source src="${data.file_url}" type="audio/mpeg"></audio>
                             </div>`;
                         }
                         
-                        // 3. Translation Output + Transliteration
                         if(data.translation) {
-                            content += `<div class="p-3 bg-white rounded border mt-3">
-                                <h6 class="text-muted small fw-bold">TRANSLATION:</h6>
-                                <div class="fs-5 mb-2">${data.translation}</div>`;
+                            content += `<div class="p-4 bg-white rounded shadow-sm border mt-3">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Translation Result</h6>
+                                <div class="fs-5 mb-3">${data.translation}</div>`;
                             
                             if(data.transliteration) {
-                                content += `<hr class="my-2">
-                                <h6 class="text-muted small fw-bold">PRONUNCIATION:</h6>
+                                content += `<hr class="my-3 opacity-25">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-2">Pronunciation</h6>
                                 <div class="text-primary fst-italic">${data.transliteration}</div>`;
                             }
                             content += `</div>`;
                         }
 
-                        // 4. Audio Player (Specific for Translation - comes after text)
                         if(data.audio_url) {
-                            content += `<div class="p-3 bg-white rounded shadow-sm border mt-2">
-                                <h6 class="text-muted small fw-bold">LISTEN (Translated):</h6>
+                            content += `<div class="p-3 bg-light rounded shadow-sm border mt-3">
+                                <h6 class="text-muted small fw-bold mb-2">LISTEN (Translated)</h6>
                                 <audio controls class="w-100"><source src="${data.audio_url}" type="audio/mpeg"></audio>
                             </div>`;
                         }
 
-                        // 5. Other Content Types
-                        if(data.translated_text) content += `<div class="p-3 bg-white rounded shadow-sm border mt-2"><strong>Translated Text used:</strong><p>${data.translated_text}</p></div>`;
+                        if(data.translated_text) content += `<div class="p-3 bg-white rounded shadow-sm border mt-3"><strong>Translated Text used:</strong><p>${data.translated_text}</p></div>`;
                         if(data.text) content += `<div class="p-3 bg-white rounded border mt-3"><strong>Transcription:</strong><p>${data.text}</p></div>`;
                         if(data.email_content) content += `<div class="p-3 bg-white rounded border mt-3"><pre>${data.email_content}</pre></div>`;
                         if(data.minutes) content += `<div class="p-3 bg-white rounded border mt-3"><pre>${data.minutes}</pre></div>`;
@@ -710,10 +862,10 @@
                         output.innerHTML = content;
                         updateStats();
                     } else { 
-                        output.innerHTML = `<div class="alert alert-danger">${data.error}</div>`; 
+                        output.innerHTML = `<div class="alert alert-danger shadow-sm border-0"><i class="fas fa-exclamation-triangle me-2"></i> ${data.error}</div>`; 
                     }
                 } catch(err) { 
-                    document.getElementById(outputId).innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`; 
+                    document.getElementById(outputId).innerHTML = `<div class="alert alert-danger shadow-sm border-0">Error: ${err.message}</div>`; 
                 } finally { 
                     btn.innerHTML = originalBtnText; 
                     btn.disabled = false; 
@@ -733,23 +885,30 @@
         handleForm('codeForm', '/review-code', 'codeOutput');
         handleForm('youtubeForm', '/summarize-video', 'youtubeOutput');
         handleForm('convertForm', '/convert-file', 'convertOutput'); 
-        
-        // NEW FORMS
         handleForm('compressForm', '/compress-image', 'compressOutput');
         handleForm('vidAudioForm', '/video-to-audio', 'vidAudioOutput');
 
         function toggleChat() { 
-            const w = document.getElementById('chatWindow'); w.style.display = w.style.display==='flex'?'none':'flex'; 
-            if(w.style.display==='flex') document.getElementById('chatInput').focus();
+            const w = document.getElementById('chatWindow'); 
+            const isFlex = w.style.display === 'flex';
+            w.style.display = isFlex ? 'none' : 'flex'; 
+            if(!isFlex) {
+                // Add simple animation class if you wanted, but basic display toggle works fine
+                document.getElementById('chatInput').focus();
+            }
         }
         async function sendChat() {
             const i = document.getElementById('chatInput'); const m = i.value.trim(); if(!m) return;
             const b = document.getElementById('chatBody'); b.innerHTML += `<div class="chat-msg chat-msg-user">${m}</div>`; i.value='';
+            
+            // Auto scroll
+            b.scrollTop = b.scrollHeight;
+
             try {
                 const res = await fetch('/chat', {method:'POST', body:new URLSearchParams({message:m})});
                 const d = await res.json();
-                b.innerHTML += `<div class="chat-msg chat-msg-ai">${d.success?d.response.replace(/\n/g,'<br>'):'Error'}</div>`;
-            } catch { b.innerHTML += `<div class="chat-msg chat-msg-ai text-danger">Error</div>`; }
+                b.innerHTML += `<div class="chat-msg chat-msg-ai">${d.success?d.response.replace(/\n/g,'<br>'):'I encountered an error.'}</div>`;
+            } catch { b.innerHTML += `<div class="chat-msg chat-msg-ai text-danger">Connection Error</div>`; }
             b.scrollTop = b.scrollHeight;
         }
         document.getElementById('chatInput').addEventListener('keypress', function(e){ if(e.key==='Enter') sendChat(); });
