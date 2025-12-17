@@ -644,34 +644,76 @@
         async function handleForm(formId, url, outputId) {
             document.getElementById(formId).addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                // Handle specific case for PDF editor
                 if(formId === 'textToPdfForm') document.getElementById('hiddenHtmlInput').value = quill.root.innerHTML;
+                
                 const btn = this.querySelector('button[type="submit"]');
                 const originalBtnText = btn.innerHTML;
-                btn.innerHTML = 'Processing...'; btn.disabled = true;
+                btn.innerHTML = 'Processing...'; 
+                btn.disabled = true;
+                
                 const formData = new FormData(this);
                 if(document.getElementById('useDemoToggle').checked) formData.append('use_demo', 'true');
+                
                 try {
                     const res = await fetch(url, { method: 'POST', body: formData });
                     const data = await res.json();
                     const output = document.getElementById(outputId);
+                    
                     if(data.success) {
                         let content = '';
+                        
+                        // 1. General File Download Link
                         if(data.file_url) content += `<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i>Success! <a href="${data.file_url}" class="fw-bold" download>Download File</a></div>`;
+                        
+                        // 2. Audio Player (For standard TTS or file conversion)
                         if(data.file_url && data.file_url.endsWith('.mp3')) content += `<div class="p-3 bg-white rounded shadow-sm border mt-2"><audio controls class="w-100"><source src="${data.file_url}" type="audio/mpeg"></audio></div>`;
+                        
+                        // 3. Translation Output + Transliteration
+                        if(data.translation) {
+                            content += `<div class="p-3 bg-white rounded border mt-3">
+                                <h6 class="text-muted small fw-bold">TRANSLATION:</h6>
+                                <div class="fs-5 mb-2">${data.translation}</div>`;
+                            
+                            // Pronunciation (English form)
+                            if(data.transliteration) {
+                                content += `<hr class="my-2">
+                                <h6 class="text-muted small fw-bold">PRONUNCIATION:</h6>
+                                <div class="text-primary fst-italic">${data.transliteration}</div>`;
+                            }
+                            content += `</div>`;
+                        }
+
+                        // 4. Audio Player (Specific for Translation - comes after text)
+                        if(data.audio_url) {
+                            content += `<div class="p-3 bg-white rounded shadow-sm border mt-2">
+                                <h6 class="text-muted small fw-bold">LISTEN:</h6>
+                                <audio controls class="w-100"><source src="${data.audio_url}" type="audio/mpeg"></audio>
+                            </div>`;
+                        }
+
+                        // 5. Other Content Types
                         if(data.translated_text) content += `<div class="p-3 bg-white rounded shadow-sm border mt-2"><strong>Translated Text used:</strong><p>${data.translated_text}</p></div>`;
                         if(data.text) content += `<div class="p-3 bg-white rounded border mt-3"><strong>Transcription:</strong><p>${data.text}</p></div>`;
-                        if(data.translation) content += `<div class="p-3 bg-white rounded border mt-3">${data.translation}</div>`;
                         if(data.email_content) content += `<div class="p-3 bg-white rounded border mt-3"><pre>${data.email_content}</pre></div>`;
                         if(data.minutes) content += `<div class="p-3 bg-white rounded border mt-3"><pre>${data.minutes}</pre></div>`;
                         if(data.analysis) content += `<div class="p-3 bg-white rounded border mt-3"><pre style="white-space:pre-wrap;">${data.analysis}</pre></div>`;
                         if(data.quiz) content += `<div class="p-3 bg-white rounded border mt-3"><pre style="white-space:pre-wrap;">${data.quiz}</pre></div>`;
                         if(data.review) content += `<div class="p-3 bg-white rounded border mt-3"><pre style="white-space:pre-wrap;">${data.review}</pre></div>`;
                         if(data.summary) content += `<div class="p-3 bg-white rounded border mt-3"><pre style="white-space:pre-wrap;">${data.summary}</pre></div>`; 
+                        
                         output.innerHTML = content;
                         updateStats();
-                    } else { output.innerHTML = `<div class="alert alert-danger">${data.error}</div>`; }
-                } catch(err) { document.getElementById(outputId).innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`; }
-                finally { btn.innerHTML = originalBtnText; btn.disabled = false; }
+                    } else { 
+                        output.innerHTML = `<div class="alert alert-danger">${data.error}</div>`; 
+                    }
+                } catch(err) { 
+                    document.getElementById(outputId).innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`; 
+                } finally { 
+                    btn.innerHTML = originalBtnText; 
+                    btn.disabled = false; 
+                }
             });
         }
 

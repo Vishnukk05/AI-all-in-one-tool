@@ -53,6 +53,7 @@ def increment_stat(field_name):
     except: pass
 
 # --- AI FUNCTIONS ---
+# --- AI FUNCTIONS ---
 def configure_genai():
     if API_KEY: genai.configure(api_key=API_KEY)
 
@@ -64,6 +65,8 @@ def get_safe_ai_response(prompt, image=None):
         HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE
     }
+    
+    # It tries models one by one from your list
     for model_name in AVAILABLE_MODELS:
         try:
             model = genai.GenerativeModel(model_name)
@@ -71,11 +74,17 @@ def get_safe_ai_response(prompt, image=None):
                 response = model.generate_content([prompt, image], safety_settings=settings)
             else:
                 response = model.generate_content(prompt, safety_settings=settings)
-            if response.text: return response.text
-        except Exception:
+            
+            if response.text: 
+                return response.text
+                
+        except Exception as e:
+            # --- THIS IS THE IMPORTANT CHANGE ---
+            # This prints the error to your computer screen so you can read it.
+            print(f"Model {model_name} failed. Error: {e}")
             continue 
+            
     return None
-
 # --- ROUTES ---
 
 @app.route('/')
@@ -229,11 +238,71 @@ def audio_to_text():
 def translate():
     increment_stat('text_gen')
     try:
-        t, tgt = request.form.get('text', ''), request.form.get('target_language', '')
-        res = get_safe_ai_response(f"Translate to {tgt}: {t}")
-        return jsonify({"success": True, "translation": res if res else "Busy"})
-    except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+        # 1. Get data
+        text = request.form.get('text', '').strip()
+        target_lang = request.form.get('target_language', 'en').strip()
 
+        if not text or not target_lang:
+            return jsonify({"success": False, "error": "Missing text or language"}), 400
+
+        # 2. UPDATED PROMPT: Ask for Translation AND Transliteration separated by "|||"
+        prompt = (
+            f"Act as a professional translator. \n"
+            f"Target Language: {target_lang}\n"
+            f"Text to translate: {text}\n"
+            f"Rule: Return the translated text in the native script, followed by '|||', followed by the transliteration (pronunciation using English letters).\n"
+            f"Example format: [Native Script] ||| [English Pronunciation]\n"
+            f"Do not add any other explanations."
+        )
+
+        res = get_safe_ai_response(prompt)
+        
+        if not res:
+            return jsonify({"success": False, "translation": "Error: AI Busy"}), 503
+
+        # 3. SPLIT THE RESPONSE
+        # The AI returns "KannadaText ||| EnglishForm". We split it here.
+        full_response = res.strip()
+        translated_text = full_response
+        transliteration = ""
+
+        if "|||" in full_response:
+            parts = full_response.split("|||")
+            translated_text = parts[0].strip()
+            transliteration = parts[1].strip()
+
+        # 4. Generate Audio (Only for the Native Text)
+        audio_url = None
+        try:
+            lang_map = {
+                'french': 'fr', 'spanish': 'es', 'hindi': 'hi', 'german': 'de', 
+                'italian': 'it', 'japanese': 'ja', 'korean': 'ko', 'russian': 'ru',
+                'chinese': 'zh-cn', 'english': 'en', 'tamil': 'ta', 'telugu': 'te',
+                'malayalam': 'ml', 'kannada': 'kn'
+            }
+            lang_code = target_lang if len(target_lang) == 2 else lang_map.get(target_lang.lower(), 'en')
+            
+            audio_name = f"trans_audio_{uuid.uuid4().hex[:10]}.mp3"
+            save_path = os.path.join(STATIC_FOLDER, audio_name)
+            
+            tts = gTTS(text=translated_text, lang=lang_code, slow=False)
+            tts.save(save_path)
+            audio_url = f"/static/{audio_name}"
+        except Exception as audio_e:
+            print(f"Audio Failed: {audio_e}")
+
+        # 5. Return everything
+        return jsonify({
+            "success": True, 
+            "translation": translated_text,
+            "transliteration": transliteration, # Sending the English form back
+            "audio_url": audio_url
+        })
+        
+    except Exception as e:
+        print(f"Translation Error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 @app.route('/generate-email', methods=['POST'])
 def generate_email():
     increment_stat('text_gen')
