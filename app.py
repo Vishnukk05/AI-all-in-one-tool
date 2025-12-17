@@ -4,21 +4,20 @@ import datetime
 import uuid
 import time
 from flask import Flask, render_template, request, jsonify, Response
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from gtts import gTTS
 from xhtml2pdf import pisa
 from io import BytesIO
 from pptx import Presentation
-from pptx.util import Inches, Pt
-from pptx.enum.text import MSO_AUTO_SIZE
 import speech_recognition as sr
 from dotenv import load_dotenv
 import psutil
+import base64
 import PIL.Image
 from youtube_transcript_api import YouTubeTranscriptApi
-# CORRECTION: This is the specific import needed for the version you installed
 from moviepy.editor import VideoFileClip
+
+# --- IMPORT FOR GROQ ---
+from groq import Groq
 
 # --- LOAD ENV ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -29,16 +28,9 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- CONFIGURATION ---
-API_KEY = os.environ.get("GOOGLE_API_KEY")
-DEMO_MODE = os.environ.get("DEMO_MODE", "false").lower() == "true"
+API_KEY = os.environ.get("GROQ_API_KEY") 
 STATIC_FOLDER = os.path.join(basedir, 'static')
 if not os.path.exists(STATIC_FOLDER): os.makedirs(STATIC_FOLDER)
-
-# --- MODEL LIST ---
-AVAILABLE_MODELS = [
-    'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 
-    'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-1.5-flash'
-]
 
 # --- STATS ---
 global_stats = {
@@ -52,39 +44,59 @@ def increment_stat(field_name):
         if field_name in global_stats: global_stats[field_name] += 1
     except: pass
 
-# --- AI FUNCTIONS ---
-# --- AI FUNCTIONS ---
-def configure_genai():
-    if API_KEY: genai.configure(api_key=API_KEY)
+# --- AI WRAPPER (GROQ) ---
+def get_safe_ai_response(prompt, image_file=None):
+    if not API_KEY:
+        print("❌ Error: GROQ_API_KEY not found in .env")
+        return None
 
-def get_safe_ai_response(prompt, image=None):
-    configure_genai()
-    settings = {
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE
-    }
-    
-    # It tries models one by one from your list
-    for model_name in AVAILABLE_MODELS:
-        try:
-            model = genai.GenerativeModel(model_name)
-            if image:
-                response = model.generate_content([prompt, image], safety_settings=settings)
-            else:
-                response = model.generate_content(prompt, safety_settings=settings)
+    try:
+        client = Groq(api_key=API_KEY)
+        
+        # 1. HANDLE IMAGE ANALYSIS (Vision)
+        if image_file:
+            # Convert image to base64
+            image_bytes = image_file.read()
+            encoded_image = base64.b64encode(image_bytes).decode('utf-8')
             
-            if response.text: 
-                return response.text
-                
-        except Exception as e:
-            # --- THIS IS THE IMPORTANT CHANGE ---
-            # This prints the error to your computer screen so you can read it.
-            print(f"Model {model_name} failed. Error: {e}")
-            continue 
-            
-    return None
+            completion = client.chat.completions.create(
+                model="llama-3.2-11b-vision-preview", # Vision Model
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{encoded_image}"
+                                },
+                            },
+                        ],
+                    }
+                ],
+                temperature=0.5,
+                max_tokens=1024,
+            )
+            return completion.choices[0].message.content
+
+        # 2. HANDLE TEXT/CHAT (UPDATED MODEL)
+        else:
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile", # <--- UPDATED TO NEW MODEL
+                messages=[
+                    {"role": "system", "content": "You are a helpful AI assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.6,
+                max_tokens=2048,
+            )
+            return completion.choices[0].message.content
+
+    except Exception as e:
+        print(f"❌ Groq API Error: {e}")
+        return None
+
 # --- ROUTES ---
 
 @app.route('/')
@@ -99,22 +111,19 @@ def get_stats():
 @app.route('/download-report')
 def download_report():
     try:
-        # 1. Get accurate time
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        # 2. Get accurate system stats (interval=1 fixes the 0% CPU bug)
         try: 
             cpu = psutil.cpu_percent(interval=1)
             ram = psutil.virtual_memory().percent
         except: 
             cpu, ram = 0, 0
 
-        # 3. Create a clean, formatted report string
         report = f"""
 ========================================
        AI WORKSPACE SYSTEM REPORT       
 ========================================
 Generated On: {now}
+Backend Provider: Groq (Llama 3.3)
 
 [SYSTEM HEALTH]
 ----------------------------------------
@@ -128,13 +137,6 @@ RAM Usage : {ram}%
 • Audio Transcriptions : {global_stats.get('transcribe', 0)}
 • PDF Documents        : {global_stats.get('pdf_gen', 0)}
 • Image Analysis       : {global_stats.get('image_analysis', 0)}
-• Code Reviews         : {global_stats.get('code_review', 0)}
-• Chat Messages        : {global_stats.get('chat_msgs', 0)}
-• Quizzes Generated    : {global_stats.get('quiz_gen', 0)}
-• Video Summaries      : {global_stats.get('video_sum', 0)}
-• File Conversions     : {global_stats.get('file_conv', 0)}
-• Image Compressions   : {global_stats.get('compression', 0)}
-• Video to Audio       : {global_stats.get('vid_audio', 0)}
 ========================================
 """
         return Response(report, mimetype="text/plain", headers={"Content-disposition": "attachment; filename=System_Report.txt"})
@@ -146,7 +148,7 @@ def chat():
     try:
         msg = request.form.get('message', '')
         if not msg: return jsonify({"success": False, "error": "Empty"}), 400
-        res = get_safe_ai_response(f"You are a helpful assistant. User: {msg}")
+        res = get_safe_ai_response(msg)
         return jsonify({"success": True, "response": res if res else "Busy."})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -155,7 +157,7 @@ def generate_minutes():
     increment_stat('text_gen')
     try:
         notes = request.form.get('notes', '')
-        res = get_safe_ai_response(f"Create structured Meeting Minutes:\n{notes}")
+        res = get_safe_ai_response(f"Create structured Meeting Minutes based on these notes:\n{notes}")
         return jsonify({"success": True, "minutes": res if res else "Error"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -166,22 +168,24 @@ def make_ppt():
         topic = request.form.get('topic', '')
         src_text = request.form.get('source_text', '')
         template_file = request.files.get('template_file')
+        
+        # PPT Generation Logic
         if template_file and template_file.filename != '':
             temp_path = os.path.join(STATIC_FOLDER, f"temp_{uuid.uuid4().hex}.pptx")
             template_file.save(temp_path)
             prs = Presentation(temp_path)
         else:
             prs = Presentation()
+            
         prompt = (f"Create a presentation about {topic}. {src_text}. "
-                  "Format exactly:\nSLIDE_TITLE: [Title]\nBULLET: [Point 1]\nBULLET: [Point 2]")
+                  "Format exactly like this:\nSLIDE_TITLE: [Title]\nBULLET: [Point 1]\nBULLET: [Point 2]")
+        
         content = get_safe_ai_response(prompt)
-        if not content: content = f"SLIDE_TITLE: {topic}\nBULLET: Content failed."
+        
+        if not content: content = f"SLIDE_TITLE: {topic}\nBULLET: Content generation failed."
+        
         lines = content.split('\n')
         curr = None
-        try:
-            slide = prs.slides.add_slide(prs.slide_layouts[0])
-            slide.shapes.title.text = topic.upper()
-        except: pass
         for line in lines:
             clean = line.strip().replace('*', '').replace('#', '')
             if "SLIDE_TITLE:" in clean:
@@ -197,6 +201,7 @@ def make_ppt():
                     p.text = clean.split("BULLET:", 1)[1].strip()
                     p.level = 0
                 except: pass
+                
         fname = f"ppt_{uuid.uuid4().hex[:10]}.pptx"
         prs.save(os.path.join(STATIC_FOLDER, fname))
         if 'temp_path' in locals() and os.path.exists(temp_path): os.remove(temp_path)
@@ -210,7 +215,7 @@ def text_to_audio():
         text = request.form.get('text', '')
         lang = request.form.get('language', 'en') 
         if lang != 'en':
-            res = get_safe_ai_response(f"Translate to {lang} ONLY:\n{text}")
+            res = get_safe_ai_response(f"Translate this to {lang} ONLY. No extra text:\n{text}")
             if res: text = res.strip()
         fname = f"audio_{uuid.uuid4().hex[:10]}.mp3"
         tts = gTTS(text=text, lang='en' if lang=='auto' else lang, slow=False)
@@ -238,77 +243,60 @@ def audio_to_text():
 def translate():
     increment_stat('text_gen')
     try:
-        # 1. Get data
         text = request.form.get('text', '').strip()
         target_lang = request.form.get('target_language', 'en').strip()
 
         if not text or not target_lang:
-            return jsonify({"success": False, "error": "Missing text or language"}), 400
+            return jsonify({"success": False, "error": "Missing text"}), 400
 
-        # 2. UPDATED PROMPT: Ask for Translation AND Transliteration separated by "|||"
+        # Updated Prompt for Groq
         prompt = (
-            f"Act as a professional translator. \n"
+            f"You are a professional translator. \n"
             f"Target Language: {target_lang}\n"
-            f"Text to translate: {text}\n"
-            f"Rule: Return the translated text in the native script, followed by '|||', followed by the transliteration (pronunciation using English letters).\n"
-            f"Example format: [Native Script] ||| [English Pronunciation]\n"
-            f"Do not add any other explanations."
+            f"Text: {text}\n"
+            f"Output Requirement: Return the translation in native script, followed by '|||', followed by the English transliteration (pronunciation).\n"
+            f"Example: [Native Script] ||| [Pronunciation]\n"
+            f"Do not include any intro or outro text."
         )
 
-        res = get_safe_ai_response(prompt)
+        full_response = get_safe_ai_response(prompt)
         
-        if not res:
-            return jsonify({"success": False, "translation": "Error: AI Busy"}), 503
+        if not full_response:
+            return jsonify({"success": False, "translation": "Error: AI Service Busy"}), 503
 
-        # 3. SPLIT THE RESPONSE
-        # The AI returns "KannadaText ||| EnglishForm". We split it here.
-        full_response = res.strip()
+        # Split logic
         translated_text = full_response
         transliteration = ""
-
         if "|||" in full_response:
             parts = full_response.split("|||")
             translated_text = parts[0].strip()
             transliteration = parts[1].strip()
 
-        # 4. Generate Audio (Only for the Native Text)
+        # Generate Audio
         audio_url = None
         try:
-            lang_map = {
-                'french': 'fr', 'spanish': 'es', 'hindi': 'hi', 'german': 'de', 
-                'italian': 'it', 'japanese': 'ja', 'korean': 'ko', 'russian': 'ru',
-                'chinese': 'zh-cn', 'english': 'en', 'tamil': 'ta', 'telugu': 'te',
-                'malayalam': 'ml', 'kannada': 'kn'
-            }
+            lang_map = {'french': 'fr', 'spanish': 'es', 'hindi': 'hi', 'german': 'de', 'kannada': 'kn', 'tamil': 'ta'}
             lang_code = target_lang if len(target_lang) == 2 else lang_map.get(target_lang.lower(), 'en')
-            
-            audio_name = f"trans_audio_{uuid.uuid4().hex[:10]}.mp3"
-            save_path = os.path.join(STATIC_FOLDER, audio_name)
-            
-            tts = gTTS(text=translated_text, lang=lang_code, slow=False)
-            tts.save(save_path)
+            audio_name = f"trans_{uuid.uuid4().hex[:8]}.mp3"
+            gTTS(text=translated_text, lang=lang_code, slow=False).save(os.path.join(STATIC_FOLDER, audio_name))
             audio_url = f"/static/{audio_name}"
-        except Exception as audio_e:
-            print(f"Audio Failed: {audio_e}")
+        except: pass
 
-        # 5. Return everything
         return jsonify({
             "success": True, 
             "translation": translated_text,
-            "transliteration": transliteration, # Sending the English form back
+            "transliteration": transliteration,
             "audio_url": audio_url
         })
         
-    except Exception as e:
-        print(f"Translation Error: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
-    
+    except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route('/generate-email', methods=['POST'])
 def generate_email():
     increment_stat('text_gen')
     try:
         to, topic = request.form.get('recipient', ''), request.form.get('topic', '')
-        res = get_safe_ai_response(f"Write email to {to} about {topic}.")
+        res = get_safe_ai_response(f"Write a professional email to {to} about {topic}.")
         return jsonify({"success": True, "email_content": res if res else "Busy"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -319,9 +307,10 @@ def text_to_pdf():
         h = request.form.get('html_content', '')
         if request.form.get('translation_needed') == 'true':
             t = request.form.get('target_language', 'English')
-            res = get_safe_ai_response(f"Translate HTML to {t}, keep tags: {h}")
+            res = get_safe_ai_response(f"Translate this HTML content to {t}, keeping all HTML tags intact: {h}")
             if res: h = res.replace('```html','').replace('```','')
-        styled_html = f"""<html><head><style>@page {{ size: A4; margin: 2cm; }} body {{ font-family: Helvetica, sans-serif; font-size: 12pt; line-height: 1.5; }}</style></head><body>{h}</body></html>"""
+        
+        styled_html = f"""<html><body>{h}</body></html>"""
         fname = f"doc_{uuid.uuid4().hex[:10]}.pdf"
         with open(os.path.join(STATIC_FOLDER, fname), "w+b") as f: 
             pisa.CreatePDF(BytesIO(styled_html.encode('utf-8')), dest=f)
@@ -334,9 +323,10 @@ def analyze_image():
     try:
         if 'image' not in request.files: return jsonify({"success": False, "error": "No image"}), 400
         img_file = request.files['image']
-        prompt = request.form.get('prompt', 'Describe this.')
-        img = PIL.Image.open(img_file)
-        res = get_safe_ai_response(prompt, image=img)
+        prompt = request.form.get('prompt', 'Describe this image detailedly.')
+        
+        # We pass the file object directly to our new Groq wrapper
+        res = get_safe_ai_response(prompt, image_file=img_file)
         return jsonify({"success": True, "analysis": res if res else "Failed."})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -347,14 +337,15 @@ def generate_quiz():
         topic = request.form.get('topic', '')
         count = request.form.get('count', '5')
         prompt = f"Create a {count}-question Multiple Choice Quiz about: {topic}. Include Answer Key at bottom."
-        quiz_text = get_safe_ai_response(prompt)
-        if not quiz_text: return jsonify({"success": False, "error": "AI Busy"}), 503
-        formatted_quiz = quiz_text.replace('\n', '<br>')
-        html_content = f"""<html><head><style>@page {{ size: A4; margin: 2cm; }} body {{ font-family: Helvetica; line-height: 1.6; }} h2 {{ color: #2563eb; border-bottom: 2px solid #ddd; padding-bottom: 10px; }}</style></head><body><h2>Quiz: {topic}</h2><div>{formatted_quiz}</div></body></html>"""
+        res = get_safe_ai_response(prompt)
+        
+        # Simple PDF generation for quiz
+        html_content = f"<h2>Quiz: {topic}</h2><pre>{res}</pre>"
         fname = f"quiz_{uuid.uuid4().hex[:10]}.pdf"
         with open(os.path.join(STATIC_FOLDER, fname), "w+b") as f:
             pisa.CreatePDF(BytesIO(html_content.encode('utf-8')), dest=f)
-        return jsonify({"success": True, "quiz": quiz_text, "file_url": f"/static/{fname}"})
+            
+        return jsonify({"success": True, "quiz": res, "file_url": f"/static/{fname}"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/review-code', methods=['POST'])
@@ -362,7 +353,7 @@ def review_code():
     increment_stat('code_review')
     try:
         code = request.form.get('code', '')
-        res = get_safe_ai_response(f"Review code:\n{code}")
+        res = get_safe_ai_response(f"Review this code and suggest improvements:\n{code}")
         return jsonify({"success": True, "review": res if res else "Error"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -374,15 +365,19 @@ def summarize_video():
         vid = None
         if "youtube.com" in url: vid = url.split("v=")[1].split("&")[0]
         elif "youtu.be" in url: vid = url.split("/")[-1]
+        
         if not vid: return jsonify({"success": False, "error": "Invalid URL"}), 400
-        try:
-            transcript = YouTubeTranscriptApi.get_transcript(vid)
-            full = " ".join([i['text'] for i in transcript])
-        except: return jsonify({"success": False, "error": "No captions available."})
-        prompt = f"Summarize video:\n{full[:30000]}"
+        
+        transcript = YouTubeTranscriptApi.get_transcript(vid)
+        full = " ".join([i['text'] for i in transcript])
+        
+        # Summarize chunks if too long
+        prompt = f"Summarize this YouTube video transcript in detail:\n{full[:20000]}"
         res = get_safe_ai_response(prompt)
         return jsonify({"success": True, "summary": res if res else "Busy"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+
+# --- RESTORED FILE CONVERSION TOOLS ---
 
 @app.route('/convert-file', methods=['POST'])
 def convert_file():
@@ -392,12 +387,15 @@ def convert_file():
         file = request.files['file']
         target_format = request.form.get('format', 'PNG').upper()
         if file.filename == '': return jsonify({"success": False, "error": "No file selected"}), 400
+        
         img = PIL.Image.open(file)
         if target_format in ['JPEG', 'JPG', 'PDF']:
             img = img.convert('RGB')
+            
         new_filename = f"converted_{uuid.uuid4().hex[:10]}.{target_format.lower()}"
         save_path = os.path.join(STATIC_FOLDER, new_filename)
         img.save(save_path, target_format if target_format != 'JPG' else 'JPEG')
+        
         return jsonify({"success": True, "file_url": f"/static/{new_filename}"})
     except Exception as e: return jsonify({"success": False, "error": f"Error: {str(e)}"}), 500
 
