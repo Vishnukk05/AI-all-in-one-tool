@@ -16,6 +16,7 @@ import PIL.Image
 from moviepy.editor import VideoFileClip
 
 # --- YOUTUBE IMPORT ---
+# Ensure you do NOT have a file named youtube_transcript_api.py in your folder
 from youtube_transcript_api import YouTubeTranscriptApi
 
 # --- IMPORT FOR GROQ ---
