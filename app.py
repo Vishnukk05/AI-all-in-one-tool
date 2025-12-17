@@ -13,8 +13,10 @@ from dotenv import load_dotenv
 import psutil
 import base64
 import PIL.Image
-from youtube_transcript_api import YouTubeTranscriptApi
 from moviepy.editor import VideoFileClip
+
+# --- YOUTUBE IMPORT ---
+from youtube_transcript_api import YouTubeTranscriptApi
 
 # --- IMPORT FOR GROQ ---
 from groq import Groq
@@ -216,41 +218,23 @@ def make_ppt():
 def text_to_audio():
     increment_stat('audio_gen')
     try:
-        # 1. Get the inputs
         text = request.form.get('text', '')
         target_lang = request.form.get('target_language', 'en') 
         
-        # 2. TRANSLATE IF NEEDED
-        # If the user chose a language other than English or Auto-detect, we translate first.
+        # Translate if needed
         if target_lang != 'en' and target_lang != 'auto-detect':
-            # Create a prompt for Groq to translate the text
-            prompt = (
-                f"Act as a professional translator.\n"
-                f"Task: Translate the following text to the language code '{target_lang}'.\n"
-                f"Rule: Return ONLY the translated text. Do not add any introductions, explanations, or quotes.\n"
-                f"Text to translate:\n{text}"
-            )
-            
-            # Call the AI (Groq)
+            prompt = (f"Translate this to language code '{target_lang}' (only text):\n{text}")
             translated_res = get_safe_ai_response(prompt)
-            
-            # If AI returns a result, update the 'text' variable with the translation
-            if translated_res:
-                text = translated_res.strip()
+            if translated_res: text = translated_res.strip()
 
-        # 3. GENERATE AUDIO (gTTS)
         fname = f"audio_{uuid.uuid4().hex[:10]}.mp3"
-        
-        # Ensure we pass a valid 2-letter language code to gTTS
-        # If target_lang is 'auto-detect' or invalid, default to 'en'
         tts_lang = target_lang if len(target_lang) == 2 else 'en'
         
         try:
             tts = gTTS(text=text, lang=tts_lang, slow=False)
             tts.save(os.path.join(STATIC_FOLDER, fname))
         except Exception as e:
-            # Fallback to English if the specific accent isn't supported by gTTS
-            print(f"gTTS specific lang failed, falling back to 'en'. Error: {e}")
+            print(f"gTTS fallback: {e}")
             tts = gTTS(text=text, lang='en', slow=False)
             tts.save(os.path.join(STATIC_FOLDER, fname))
 
@@ -260,8 +244,46 @@ def text_to_audio():
             "translated_text": text 
         })
         
-    except Exception as e: 
-        print(f"TTS Error: {e}")
+    except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+
+# --- UPDATED AUDIO TO TEXT ROUTE ---
+@app.route('/audio-to-text', methods=['POST'])
+def audio_to_text():
+    increment_stat('transcribe')
+    try:
+        if 'file' not in request.files:
+            return jsonify({"success": False, "error": "No file uploaded"}), 400
+            
+        file = request.files['file']
+        # FIXED: Get language from frontend (e.g. ml-IN, hi-IN, etc)
+        language_code = request.form.get('language', 'en-US') 
+
+        if file.filename == '':
+            return jsonify({"success": False, "error": "No file selected"}), 400
+
+        # Save temp file
+        filename = f"temp_rec_{uuid.uuid4().hex}.wav"
+        filepath = os.path.join(STATIC_FOLDER, filename)
+        file.save(filepath)
+
+        # Transcribe using SpeechRecognition
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(filepath) as source:
+            audio_data = recognizer.record(source)
+            # FIXED: Pass language code to Google
+            text = recognizer.recognize_google(audio_data, language=language_code)
+
+        # Cleanup
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        return jsonify({"success": True, "text": text})
+
+    except sr.UnknownValueError:
+        return jsonify({"success": False, "error": "Could not understand audio"}), 400
+    except sr.RequestError:
+        return jsonify({"success": False, "error": "API unavailable"}), 503
+    except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/translate', methods=['POST'])
@@ -347,8 +369,6 @@ def analyze_image():
         img_file = request.files['image']
         prompt = request.form.get('prompt', 'Describe this image detailedly.')
         
-        # Pass the file object directly to the Groq wrapper
-        # Important: Ensure the file pointer is at the start if read previously, though here we pass it fresh.
         res = get_safe_ai_response(prompt, image_file=img_file)
         return jsonify({"success": True, "analysis": res if res else "Failed to analyze image."})
     except Exception as e: 
@@ -400,8 +420,6 @@ def summarize_video():
         return jsonify({"success": True, "summary": res if res else "Busy"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
-# --- RESTORED FILE CONVERSION TOOLS ---
-
 @app.route('/convert-file', methods=['POST'])
 def convert_file():
     increment_stat('file_conv')
@@ -428,14 +446,11 @@ def compress_image():
     try:
         if 'file' not in request.files: return jsonify({"success": False, "error": "No file"}), 400
         file = request.files['file']
-        
-        # Get target size in KB (default to 500KB)
         target_kb = int(request.form.get('target_kb', '500'))
         
         img = PIL.Image.open(file)
         img = img.convert('RGB')
         
-        # Compress logic
         output_io = BytesIO()
         quality = 90
         step = 5
@@ -445,14 +460,12 @@ def compress_image():
             output_io.truncate()
             img.save(output_io, format='JPEG', quality=quality, optimize=True)
             size_kb = output_io.tell() / 1024
-            
             if size_kb <= target_kb:
                 break
             quality -= step
             
         new_filename = f"compressed_{uuid.uuid4().hex[:10]}.jpg"
         save_path = os.path.join(STATIC_FOLDER, new_filename)
-        
         with open(save_path, "wb") as f:
             f.write(output_io.getvalue())
             
