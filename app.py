@@ -24,8 +24,11 @@ env_path = os.path.join(basedir, '.env')
 load_dotenv(env_path)
 
 app = Flask(__name__)
-# CRITICAL: Secret key for Admin Sessions
-app.secret_key = os.environ.get("SECRET_KEY", "change_this_to_random_string")
+
+# --- CRITICAL: SECRET KEY FOR ADMIN LOGIN ---
+# This is required for sessions to work. Change the string to something random for security.
+app.secret_key = os.environ.get("SECRET_KEY", "super_secret_admin_key_12345") 
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- CONFIGURATION ---
@@ -45,10 +48,11 @@ def increment_stat(field_name):
         if field_name in global_stats: global_stats[field_name] += 1
     except: pass
 
-# --- ADMIN AUTHENTICATION ---
+# --- ADMIN CREDENTIALS ---
 ADMIN_USER = "Admin"
 ADMIN_PASS = "M@nojkumarkk@2343"
 
+# --- AUTH ROUTES ---
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -75,13 +79,15 @@ def get_safe_ai_response(prompt, image_file=None):
     try:
         client = Groq(api_key=API_KEY)
         
+        # 1. HANDLE IMAGE ANALYSIS (Vision)
         if image_file:
             try:
+                # Convert image to base64
                 image_bytes = image_file.read()
                 encoded_image = base64.b64encode(image_bytes).decode('utf-8')
                 
                 completion = client.chat.completions.create(
-                    model="llama-3.2-11b-vision-preview", 
+                    model="llama-3.2-11b-vision-preview", # Vision Model
                     messages=[
                         {
                             "role": "user",
@@ -101,11 +107,13 @@ def get_safe_ai_response(prompt, image_file=None):
                 )
                 return completion.choices[0].message.content
             except Exception as img_err:
+                print(f"❌ Vision Error: {img_err}")
                 return f"Error analyzing image: {str(img_err)}"
 
+        # 2. HANDLE TEXT/CHAT
         else:
             completion = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="llama-3.3-70b-versatile", # Text Model
                 messages=[
                     {"role": "system", "content": "You are a helpful AI assistant."},
                     {"role": "user", "content": prompt}
@@ -126,18 +134,19 @@ def index(): return render_template('index.html')
 
 @app.route('/api/stats')
 def get_stats():
-    # Only return real CPU stats if admin
+    # Only show real CPU stats if logged in as Admin
     if not session.get('is_admin'):
         return jsonify({"cpu": 0, "ram": 0, "usage": global_stats})
-        
+
     try: c, r = psutil.cpu_percent(0.1), psutil.virtual_memory().percent
     except: c, r = 0, 0
     return jsonify({"cpu": c, "ram": r, "usage": global_stats})
 
 @app.route('/download-report')
 def download_report():
+    # Protect Route: Only Admin can download
     if not session.get('is_admin'):
-        return "Unauthorized", 401
+        return "Unauthorized Access. Please login as Admin.", 401
 
     try:
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -153,6 +162,7 @@ def download_report():
 ========================================
 Generated On: {now}
 Backend Provider: Groq (Llama 3.3)
+Admin User: {ADMIN_USER}
 
 [SYSTEM HEALTH]
 ----------------------------------------
@@ -166,6 +176,9 @@ RAM Usage : {ram}%
 • Audio Transcriptions : {global_stats.get('transcribe', 0)}
 • PDF Documents        : {global_stats.get('pdf_gen', 0)}
 • Image Analysis       : {global_stats.get('image_analysis', 0)}
+• Chat Messages        : {global_stats.get('chat_msgs', 0)}
+• Code Reviews         : {global_stats.get('code_review', 0)}
+• File Conversions     : {global_stats.get('file_conv', 0)}
 ========================================
 """
         return Response(report, mimetype="text/plain", headers={"Content-disposition": "attachment; filename=System_Report.txt"})
@@ -198,6 +211,7 @@ def make_ppt():
         src_text = request.form.get('source_text', '')
         template_file = request.files.get('template_file')
         
+        # PPT Generation Logic
         if template_file and template_file.filename != '':
             temp_path = os.path.join(STATIC_FOLDER, f"temp_{uuid.uuid4().hex}.pptx")
             template_file.save(temp_path)
@@ -209,6 +223,7 @@ def make_ppt():
                   "Format exactly like this:\nSLIDE_TITLE: [Title]\nBULLET: [Point 1]\nBULLET: [Point 2]")
         
         content = get_safe_ai_response(prompt)
+        
         if not content: content = f"SLIDE_TITLE: {topic}\nBULLET: Content generation failed."
         
         lines = content.split('\n')
@@ -242,6 +257,7 @@ def text_to_audio():
         text = request.form.get('text', '')
         target_lang = request.form.get('target_language', 'en') 
         
+        # Translate if needed
         if target_lang != 'en' and target_lang != 'auto-detect':
             prompt = (f"Translate this to language code '{target_lang}' (only text):\n{text}")
             translated_res = get_safe_ai_response(prompt)
@@ -254,6 +270,7 @@ def text_to_audio():
             tts = gTTS(text=text, lang=tts_lang, slow=False)
             tts.save(os.path.join(STATIC_FOLDER, fname))
         except Exception as e:
+            print(f"gTTS fallback: {e}")
             tts = gTTS(text=text, lang='en', slow=False)
             tts.save(os.path.join(STATIC_FOLDER, fname))
 
@@ -262,6 +279,7 @@ def text_to_audio():
             "file_url": f"/static/{fname}", 
             "translated_text": text 
         })
+        
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/audio-to-text', methods=['POST'])
@@ -270,21 +288,28 @@ def audio_to_text():
     try:
         if 'file' not in request.files:
             return jsonify({"success": False, "error": "No file uploaded"}), 400
+            
         file = request.files['file']
         language_code = request.form.get('language', 'en-US') 
+
         if file.filename == '':
             return jsonify({"success": False, "error": "No file selected"}), 400
 
+        # Save temp file
         filename = f"temp_rec_{uuid.uuid4().hex}.wav"
         filepath = os.path.join(STATIC_FOLDER, filename)
         file.save(filepath)
 
+        # Transcribe using SpeechRecognition
         recognizer = sr.Recognizer()
         with sr.AudioFile(filepath) as source:
             audio_data = recognizer.record(source)
             text = recognizer.recognize_google(audio_data, language=language_code)
 
-        if os.path.exists(filepath): os.remove(filepath)
+        # Cleanup
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
         return jsonify({"success": True, "text": text})
 
     except sr.UnknownValueError:
@@ -314,7 +339,9 @@ def translate():
         )
 
         full_response = get_safe_ai_response(prompt)
-        if not full_response: return jsonify({"success": False, "translation": "Error: AI Service Busy"}), 503
+        
+        if not full_response:
+            return jsonify({"success": False, "translation": "Error: AI Service Busy"}), 503
 
         translated_text = full_response
         transliteration = ""
@@ -338,6 +365,7 @@ def translate():
             "transliteration": transliteration,
             "audio_url": audio_url
         })
+        
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/generate-email', methods=['POST'])
@@ -359,7 +387,7 @@ def text_to_pdf():
             res = get_safe_ai_response(f"Translate this HTML content to {t}, keeping all HTML tags intact: {h}")
             if res: h = res.replace('```html','').replace('```','')
         
-        styled_html = f"<html><body>{h}</body></html>"
+        styled_html = f"""<html><body>{h}</body></html>"""
         fname = f"doc_{uuid.uuid4().hex[:10]}.pdf"
         with open(os.path.join(STATIC_FOLDER, fname), "w+b") as f: 
             pisa.CreatePDF(BytesIO(styled_html.encode('utf-8')), dest=f)
@@ -373,9 +401,12 @@ def analyze_image():
         if 'image' not in request.files: return jsonify({"success": False, "error": "No image"}), 400
         img_file = request.files['image']
         prompt = request.form.get('prompt', 'Describe this image detailedly.')
+        
         res = get_safe_ai_response(prompt, image_file=img_file)
         return jsonify({"success": True, "analysis": res if res else "Failed to analyze image."})
-    except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+    except Exception as e: 
+        print(f"Analyze Image Route Error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/generate-quiz', methods=['POST'])
 def generate_quiz():
@@ -385,10 +416,12 @@ def generate_quiz():
         count = request.form.get('count', '5')
         prompt = f"Create a {count}-question Multiple Choice Quiz about: {topic}. Include Answer Key at bottom."
         res = get_safe_ai_response(prompt)
+        
         html_content = f"<h2>Quiz: {topic}</h2><pre>{res}</pre>"
         fname = f"quiz_{uuid.uuid4().hex[:10]}.pdf"
         with open(os.path.join(STATIC_FOLDER, fname), "w+b") as f:
             pisa.CreatePDF(BytesIO(html_content.encode('utf-8')), dest=f)
+            
         return jsonify({"success": True, "quiz": res, "file_url": f"/static/{fname}"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -411,13 +444,15 @@ def convert_file():
         if file.filename == '': return jsonify({"success": False, "error": "No file selected"}), 400
         
         img = PIL.Image.open(file)
-        if target_format in ['JPEG', 'JPG', 'PDF']: img = img.convert('RGB')
+        if target_format in ['JPEG', 'JPG', 'PDF']:
+            img = img.convert('RGB')
             
         new_filename = f"converted_{uuid.uuid4().hex[:10]}.{target_format.lower()}"
         save_path = os.path.join(STATIC_FOLDER, new_filename)
         img.save(save_path, target_format if target_format != 'JPG' else 'JPEG')
+        
         return jsonify({"success": True, "file_url": f"/static/{new_filename}"})
-    except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
+    except Exception as e: return jsonify({"success": False, "error": f"Error: {str(e)}"}), 500
 
 @app.route('/compress-image', methods=['POST'])
 def compress_image():
@@ -427,19 +462,27 @@ def compress_image():
         file = request.files['file']
         target_kb = int(request.form.get('target_kb', '500'))
         
-        img = PIL.Image.open(file).convert('RGB')
+        img = PIL.Image.open(file)
+        img = img.convert('RGB')
+        
         output_io = BytesIO()
         quality = 90
+        step = 5
+        
         while quality > 5:
             output_io.seek(0)
             output_io.truncate()
             img.save(output_io, format='JPEG', quality=quality, optimize=True)
-            if (output_io.tell() / 1024) <= target_kb: break
-            quality -= 5
+            size_kb = output_io.tell() / 1024
+            if size_kb <= target_kb:
+                break
+            quality -= step
             
         new_filename = f"compressed_{uuid.uuid4().hex[:10]}.jpg"
         save_path = os.path.join(STATIC_FOLDER, new_filename)
-        with open(save_path, "wb") as f: f.write(output_io.getvalue())
+        with open(save_path, "wb") as f:
+            f.write(output_io.getvalue())
+            
         return jsonify({"success": True, "file_url": f"/static/{new_filename}"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
@@ -449,7 +492,9 @@ def video_to_audio():
     try:
         if 'file' not in request.files: return jsonify({"success": False, "error": "No video file"}), 400
         file = request.files['file']
-        temp_vid_path = os.path.join(STATIC_FOLDER, f"temp_vid_{uuid.uuid4().hex[:10]}.mp4")
+        
+        temp_vid_name = f"temp_vid_{uuid.uuid4().hex[:10]}.mp4"
+        temp_vid_path = os.path.join(STATIC_FOLDER, temp_vid_name)
         file.save(temp_vid_path)
         
         audio_name = f"extracted_{uuid.uuid4().hex[:10]}.mp3"
@@ -460,6 +505,7 @@ def video_to_audio():
         clip.close()
         
         if os.path.exists(temp_vid_path): os.remove(temp_vid_path)
+        
         return jsonify({"success": True, "file_url": f"/static/{audio_name}"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
