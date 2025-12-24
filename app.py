@@ -3,20 +3,22 @@ import logging
 import datetime
 import uuid
 import time
+import base64
+import psutil
+from io import BytesIO
+
+# --- FLASK & SERVER IMPORTS ---
 from flask import Flask, render_template, request, jsonify, Response, session
+from dotenv import load_dotenv
+
+# --- AI & MEDIA IMPORTS ---
+from groq import Groq
 from gtts import gTTS
 from xhtml2pdf import pisa
-from io import BytesIO
 from pptx import Presentation
 import speech_recognition as sr
-from dotenv import load_dotenv
-import psutil
-import base64
 import PIL.Image
 from moviepy.video.io.VideoFileClip import VideoFileClip
-
-# --- IMPORT FOR GROQ ---
-from groq import Groq
 
 # --- LOAD ENV ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -25,16 +27,18 @@ load_dotenv(env_path)
 
 app = Flask(__name__)
 
-# --- CRITICAL: SECRET KEY FOR ADMIN LOGIN ---
-# This is required for sessions to work. Change the string to something random for security.
+# --- CRITICAL: SECRET KEY ---
+# Required for sessions. On production, keep this safe.
 app.secret_key = os.environ.get("SECRET_KEY", "super_secret_admin_key_12345") 
 
+# --- LOGGING SETUP ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- CONFIGURATION ---
 API_KEY = os.environ.get("GROQ_API_KEY") 
 STATIC_FOLDER = os.path.join(basedir, 'static')
-if not os.path.exists(STATIC_FOLDER): os.makedirs(STATIC_FOLDER)
+if not os.path.exists(STATIC_FOLDER): 
+    os.makedirs(STATIC_FOLDER)
 
 # --- STATS ---
 global_stats = {
@@ -45,33 +49,22 @@ global_stats = {
 
 def increment_stat(field_name):
     try:
-        if field_name in global_stats: global_stats[field_name] += 1
+        if field_name in global_stats: 
+            global_stats[field_name] += 1
     except: pass
 
 # --- ADMIN CREDENTIALS ---
 ADMIN_USER = "Admin"
 ADMIN_PASS = "M@nojkumarkk@2343"
 
-# --- AUTH ROUTES ---
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    if data.get('username') == ADMIN_USER and data.get('password') == ADMIN_PASS:
-        session['is_admin'] = True
-        return jsonify({"success": True})
-    return jsonify({"success": False, "error": "Invalid Credentials"}), 401
+# ==============================================================================
+#                               HELPER FUNCTIONS
+# ==============================================================================
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.pop('is_admin', None)
-    return jsonify({"success": True})
-
-@app.route('/check-auth', methods=['GET'])
-def check_auth():
-    return jsonify({"is_admin": session.get('is_admin', False)})
-
-# --- AI WRAPPER (GROQ) ---
 def get_safe_ai_response(prompt, image_file=None):
+    """
+    Wrapper for Groq API to handle Text and Vision requests safely.
+    """
     if not API_KEY:
         print("❌ Error: GROQ_API_KEY not found in .env")
         return None
@@ -127,11 +120,41 @@ def get_safe_ai_response(prompt, image_file=None):
         print(f"❌ Groq API Error: {e}")
         return None
 
-# --- ROUTES ---
+# ==============================================================================
+#                               CORE ROUTES
+# ==============================================================================
 
 @app.route('/')
-def index(): return render_template('index.html')
+def index(): 
+    return render_template('index.html')
 
+# --- CRITICAL FIX FOR RENDER DEPLOYMENT ---
+@app.route('/health')
+def health_check():
+    """
+    Render calls this to verify the app is running.
+    """
+    return "OK", 200
+
+# --- AUTH ROUTES ---
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    if data.get('username') == ADMIN_USER and data.get('password') == ADMIN_PASS:
+        session['is_admin'] = True
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "Invalid Credentials"}), 401
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('is_admin', None)
+    return jsonify({"success": True})
+
+@app.route('/check-auth', methods=['GET'])
+def check_auth():
+    return jsonify({"is_admin": session.get('is_admin', False)})
+
+# --- STATS ROUTES ---
 @app.route('/api/stats')
 def get_stats():
     # Only show real CPU stats if logged in as Admin
@@ -183,6 +206,10 @@ RAM Usage : {ram}%
 """
         return Response(report, mimetype="text/plain", headers={"Content-disposition": "attachment; filename=System_Report.txt"})
     except Exception as e: return str(e), 500
+
+# ==============================================================================
+#                               FEATURE ROUTES
+# ==============================================================================
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -509,5 +536,14 @@ def video_to_audio():
         return jsonify({"success": True, "file_url": f"/static/{audio_name}"})
     except Exception as e: return jsonify({"success": False, "error": str(e)}), 500
 
+# ==============================================================================
+#                               MAIN EXECUTION
+# ==============================================================================
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # CRITICAL: Use the PORT environment variable if available (Render provides this).
+    # If not found (e.g., local testing), default to 5000.
+    port = int(os.environ.get("PORT", 5000))
+    
+    # CRITICAL: Host must be '0.0.0.0' to be accessible outside the container.
+    app.run(host="0.0.0.0", port=port, debug=True)
