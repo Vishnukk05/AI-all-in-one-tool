@@ -12,17 +12,24 @@
     
     <style>
         :root {
-            /* PROFESSIONAL PALETTE */
+            /* --- COLOR PALETTE --- */
             --primary: #4f46e5;
             --primary-dark: #3730a3;
             --secondary: #64748b;
+            
+            /* --- BACKGROUNDS --- */
             --bg-body: #f8fafc;
             --bg-sidebar: #ffffff;
+            
+            /* --- TEXT COLORS --- */
             --text-main: #0f172a;
             --text-muted: #64748b;
             
+            /* --- DIMENSIONS --- */
             --sidebar-width: 280px;
             --header-height: 70px;
+            
+            /* --- UI ELEMENTS --- */
             --radius-card: 16px;
             --radius-btn: 8px;
             --shadow-subtle: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
@@ -34,16 +41,21 @@
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
+            margin: 0;
         }
 
-        /* --- SIDEBAR --- */
+        /* =======================================================
+           SIDEBAR STYLING
+        ======================================================== */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--bg-sidebar);
             height: 100vh;
             position: fixed;
-            left: 0; top: 0;
-            display: flex; flex-direction: column;
+            left: 0; 
+            top: 0;
+            display: flex; 
+            flex-direction: column;
             border-right: 1px solid #e2e8f0;
             z-index: 1050;
             transition: transform 0.3s ease-in-out;
@@ -51,7 +63,8 @@
 
         .brand {
             height: var(--header-height);
-            display: flex; align-items: center;
+            display: flex; 
+            align-items: center;
             padding: 0 1.5rem;
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 1.3rem;
@@ -78,7 +91,6 @@
             margin: 1.5rem 0 0.5rem 0.8rem;
         }
 
-        /* Generic Nav Link Style */
         .nav-btn-custom {
             width: 100%;
             text-align: left;
@@ -90,15 +102,31 @@
             margin-bottom: 4px;
             border-radius: var(--radius-btn);
             font-size: 0.95rem;
-            display: flex; align-items: center;
+            display: flex; 
+            align-items: center;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
-        .nav-btn-custom:hover { background-color: #f1f5f9; color: var(--primary); transform: translateX(4px); }
-        .nav-btn-custom.active { background-color: #eef2ff; color: var(--primary); font-weight: 600; }
-        .nav-btn-custom i { width: 24px; text-align: center; margin-right: 12px; }
+        .nav-btn-custom:hover { 
+            background-color: #f1f5f9; 
+            color: var(--primary); 
+            transform: translateX(4px); 
+        }
 
-        /* --- SIDEBAR FOOTER (ADMIN SECTION) --- */
+        .nav-btn-custom.active { 
+            background-color: #eef2ff; 
+            color: var(--primary); 
+            font-weight: 600; 
+        }
+
+        .nav-btn-custom i { 
+            width: 24px; 
+            text-align: center; 
+            margin-right: 12px; 
+        }
+
+        /* --- SIDEBAR FOOTER (ADMIN) --- */
         .sidebar-footer {
             padding: 1rem;
             border-top: 1px solid #e2e8f0;
@@ -107,39 +135,94 @@
         }
 
         .admin-profile-card {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px; background: white; border: 1px solid #e2e8f0;
-            border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 10px; 
+            background: white; 
+            border: 1px solid #e2e8f0;
+            border-radius: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         
-        .admin-info { display: flex; align-items: center; gap: 10px; }
-        .admin-avatar {
-            width: 36px; height: 36px; background: var(--primary); color: white;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold;
+        .admin-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
         }
-        .admin-text h6 { margin: 0; font-size: 0.9rem; font-weight: 600; }
-        .admin-text small { font-size: 0.75rem; color: #64748b; }
+
+        .admin-avatar {
+            width: 36px; 
+            height: 36px; 
+            background: var(--primary); 
+            color: white;
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold;
+        }
+
+        .admin-text h6 { 
+            margin: 0; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+        }
+        
+        .admin-text small { 
+            font-size: 0.75rem; 
+            color: #64748b; 
+        }
 
         .btn-logout {
-            border: none; background: #fee2e2; color: #ef4444;
-            width: 32px; height: 32px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            border: none; 
+            background: #fee2e2; 
+            color: #ef4444;
+            width: 32px; 
+            height: 32px; 
+            border-radius: 8px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.2s;
+            cursor: pointer;
         }
-        .btn-logout:hover { background: #fecaca; }
+
+        .btn-logout:hover { 
+            background: #fecaca; 
+        }
 
         .btn-login-sidebar {
-            width: 100%; background: white; border: 1px solid #e2e8f0;
-            color: var(--text-muted); font-weight: 600; padding: 10px;
-            border-radius: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; 
+            background: white; 
+            border: 1px solid #e2e8f0;
+            color: var(--text-muted); 
+            font-weight: 600; 
+            padding: 10px;
+            border-radius: 10px; 
+            transition: 0.2s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            cursor: pointer;
         }
-        .btn-login-sidebar:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- MAIN CONTENT --- */
+        .btn-login-sidebar:hover { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary); 
+        }
+
+        /* =======================================================
+           MAIN CONTENT AREA
+        ======================================================== */
         .main-content {
             margin-left: var(--sidebar-width);
             height: 100vh;
             overflow-y: auto;
-            display: flex; flex-direction: column;
+            display: flex; 
+            flex-direction: column;
             transition: margin-left 0.3s ease-in-out;
         }
 
@@ -149,12 +232,22 @@
             backdrop-filter: blur(10px);
             padding: 0 2rem;
             border-bottom: 1px solid #e2e8f0;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 900;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: sticky; 
+            top: 0; 
+            z-index: 900;
             flex-shrink: 0;
         }
 
-        .mobile-toggle { display: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; margin-right: 15px; }
+        .mobile-toggle { 
+            display: none; 
+            font-size: 1.5rem; 
+            color: var(--text-main); 
+            cursor: pointer; 
+            margin-right: 15px; 
+        }
 
         .content-area { 
             padding: 2rem; 
@@ -164,43 +257,318 @@
             flex-grow: 1;
         }
 
-        /* --- DASHBOARD WIDGETS --- */
+        /* =======================================================
+           WIDGETS & CARDS
+        ======================================================== */
         .welcome-banner {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            color: white; border-radius: var(--radius-card); padding: 2.5rem; margin-bottom: 2rem;
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
+            color: white; 
+            border-radius: var(--radius-card); 
+            padding: 2.5rem; 
+            margin-bottom: 2rem;
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 1rem;
             box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.5);
         }
 
         .card-box {
-            background: white; border: 1px solid #e2e8f0; border-radius: var(--radius-card);
-            padding: 1.5rem; box-shadow: var(--shadow-subtle); height: 100%;
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-radius: var(--radius-card);
+            padding: 1.5rem; 
+            box-shadow: var(--shadow-subtle); 
+            height: 100%;
         }
 
-        /* --- HISTORY TABLE --- */
-        .table-custom th { font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
-        .table-custom td { padding: 1rem 0.75rem; vertical-align: middle; color: var(--text-main); border-bottom: 1px solid #f1f5f9; }
-        .status-badge { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .showcase-carousel { 
+            background: #0f172a; 
+            border-radius: var(--radius-card); 
+            overflow: hidden; 
+            box-shadow: var(--shadow-subtle); 
+            border: 1px solid #e2e8f0; 
+            height: 380px; 
+        }
 
-        /* --- CAROUSEL --- */
-        .showcase-carousel { background: #0f172a; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-subtle); border: 1px solid #e2e8f0; height: 380px; }
-        .carousel-item { height: 380px; background-size: cover; background-position: center; position: relative; }
+        .carousel-item { 
+            height: 380px; 
+            background-size: cover; 
+            background-position: center; 
+            position: relative; 
+        }
+
         .carousel-caption-custom {
-            position: absolute; bottom: 0; left: 0; right: 0;
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0) 100%);
-            color: white; padding: 3rem 2.5rem; text-align: left;
+            color: white; 
+            padding: 3rem 2.5rem; 
+            text-align: left;
         }
-        .slide-icon { font-size: 3rem; margin-bottom: 1rem; color: rgba(255,255,255,0.9); text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .carousel-caption-custom h3 { font-weight: 800; margin-bottom: 0.5rem; font-size: 1.8rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .carousel-caption-custom p { font-size: 1.1rem; opacity: 0.9; max-width: 700px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
-        /* --- FORMS --- */
-        .form-control, .form-select { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: var(--radius-btn); }
-        .form-control:focus { background-color: white; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-        .btn-primary { background-color: var(--primary); border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-btn); font-weight: 600; }
-        .btn-primary:hover { background-color: var(--primary-dark); }
+        .slide-icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+            color: rgba(255,255,255,0.9); 
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        }
 
-        /* --- FOOTER --- */
+        .carousel-caption-custom h3 { 
+            font-weight: 800; 
+            margin-bottom: 0.5rem; 
+            font-size: 1.8rem; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+        }
+        
+        .carousel-caption-custom p { 
+            font-size: 1.1rem; 
+            opacity: 0.9; 
+            max-width: 700px; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); 
+        }
+
+        /* =======================================================
+           FORM ELEMENTS
+        ======================================================== */
+        .form-control, .form-select { 
+            background-color: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 0.75rem 1rem; 
+            border-radius: var(--radius-btn); 
+        }
+        
+        .form-control:focus { 
+            background-color: white; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); 
+        }
+        
+        .btn-primary { 
+            background-color: var(--primary); 
+            border: none; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: var(--radius-btn); 
+            font-weight: 600; 
+        }
+        
+        .btn-primary:hover { 
+            background-color: var(--primary-dark); 
+        }
+
+        /* =======================================================
+           OUTPUT BOX & QUIZ FORMATTING
+        ======================================================== */
+        .result-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+        
+        .result-box h1, .result-box h2, .result-box h3 { 
+            margin-top: 1rem; 
+            font-weight: 700; 
+            color: #1e293b; 
+        }
+        
+        .result-box pre { 
+            background: #1e293b; 
+            color: #e2e8f0; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            overflow-x: auto; 
+        }
+        
+        .result-box code { 
+            font-family: 'Consolas', monospace; 
+            color: #d63384; 
+        }
+
+        /* --- QUIZ SPECIFIC STYLES (Fixed Alignment) --- */
+        .result-box .question-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .result-box .q-title {
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .result-box .options-list {
+            list-style-type: none; /* Remove default bullets */
+            padding-left: 0;
+        }
+
+        .result-box .options-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .result-box .options-list li:hover {
+            background-color: #eef2ff;
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        /* Quiz Answer Key Table */
+        .result-box table.answer-key {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-box table.answer-key th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .result-box table.answer-key td {
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-main);
+        }
+
+        /* =======================================================
+           CHAT WIDGET
+        ======================================================== */
+        .floating-chat-btn { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            width: 60px; 
+            height: 60px; 
+            background: var(--primary); 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            cursor: pointer; 
+            z-index: 2000; 
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3); 
+            transition: transform 0.2s; 
+        }
+        
+        .floating-chat-btn:hover { 
+            transform: scale(1.1); 
+        }
+        
+        .chat-window { 
+            position: fixed; 
+            bottom: 100px; 
+            right: 30px; 
+            width: 360px; 
+            height: 500px; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
+            display: none; 
+            flex-direction: column; 
+            z-index: 2000; 
+            overflow: hidden; 
+            border: 1px solid #e2e8f0; 
+        }
+        
+        .chat-header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-weight: 600; 
+        }
+        
+        .chat-body { 
+            flex-grow: 1; 
+            padding: 15px; 
+            background: #f8fafc; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        
+        .chat-msg { 
+            max-width: 85%; 
+            padding: 10px 14px; 
+            border-radius: 12px; 
+            font-size: 0.9rem; 
+        }
+        
+        .chat-msg-ai { 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-bottom-left-radius: 2px; 
+        }
+        
+        .chat-msg-user { 
+            background: var(--primary); 
+            color: white; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 2px; 
+        }
+        
+        .chat-footer { 
+            padding: 10px; 
+            background: white; 
+            border-top: 1px solid #e2e8f0; 
+            display: flex; 
+            gap: 8px; 
+        }
+
+        /* Editor Container */
+        #editor-container { 
+            height: 350px; 
+            background: white; 
+            border-radius: 0 0 12px 12px; 
+            border: 1px solid #e2e8f0; 
+            border-top: 0; 
+        }
+        
+        .ql-toolbar { 
+            border-radius: 12px 12px 0 0; 
+            border-color: #e2e8f0 !important; 
+            background: #f8fafc; 
+        }
+        
+        .ql-container { 
+            border-color: #e2e8f0 !important; 
+            font-family: 'Inter', sans-serif; 
+        }
+
+        /* Footer */
         .app-footer {
             text-align: center;
             padding: 1.5rem;
@@ -212,60 +580,7 @@
             flex-shrink: 0;
         }
 
-        /* --- CHAT --- */
-        .floating-chat-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; z-index: 2000; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3); transition: transform 0.2s; }
-        .floating-chat-btn:hover { transform: scale(1.1); }
-        .chat-window { position: fixed; bottom: 100px; right: 30px; width: 360px; height: 500px; background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); display: none; flex-direction: column; z-index: 2000; overflow: hidden; border: 1px solid #e2e8f0; }
-        .chat-header { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
-        .chat-body { flex-grow: 1; padding: 15px; background: #f8fafc; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; }
-        .chat-msg-ai { background: white; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px; }
-        .chat-msg-user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-footer { padding: 10px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; }
-
-        /* EDITOR */
-        #editor-container { height: 350px; background: white; border-radius: 0 0 12px 12px; border: 1px solid #e2e8f0; border-top: 0; }
-        .ql-toolbar { border-radius: 12px 12px 0 0; border-color: #e2e8f0 !important; background: #f8fafc; }
-        .ql-container { border-color: #e2e8f0 !important; font-family: 'Inter', sans-serif; }
-        
-        /* OUTPUT RESULT STYLES */
-        .result-box {
-            background-color: #f1f5f9;
-            border-left: 4px solid var(--primary);
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            overflow-x: auto;
-        }
-        
-        .result-box-text { white-space: pre-wrap; }
-        .result-box-html { white-space: normal; }
-
-        /* Quiz List Styling (A, B, C) */
-        .result-box-html ol {
-            list-style-type: upper-alpha !important; 
-            padding-left: 20px;
-        }
-
-        /* Quiz Table Styling */
-        .result-box table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background: white;
-        }
-        .result-box th, .result-box td {
-            border: 1px solid #cbd5e1;
-            padding: 10px;
-            text-align: left;
-        }
-        .result-box th {
-            background-color: #e2e8f0;
-            font-weight: 600;
-        }
-
-        /* --- RESPONSIVE MEDIA QUERIES --- */
+        /* Responsive */
         @media (max-width: 991px) {
             .sidebar { transform: translateX(-100%); width: 280px; }
             .sidebar.show { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
@@ -288,6 +603,7 @@
         
         <div class="nav-section">
             <div id="nav-container">
+                
                 <div id="userToolsNavigation">
                     <div class="nav-label">Overview</div>
                     <button class="nav-btn-custom active" id="btn-home" onclick="showUserSection('home', 'Dashboard')">
@@ -295,34 +611,65 @@
                     </button>
 
                     <div class="nav-label">Productivity</div>
-                    <button class="nav-btn-custom" onclick="showUserSection('minutes', 'Meeting Minutes')"><i class="fas fa-file-pen"></i> Minutes</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('ppt', 'Presentation Generator')"><i class="fas fa-desktop"></i> Slides</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('email', 'Email Drafter')"><i class="fas fa-envelope-open-text"></i> Email</button>
+                    <button class="nav-btn-custom" onclick="showUserSection('minutes', 'Meeting Minutes')">
+                        <i class="fas fa-file-pen"></i> Minutes
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('ppt', 'Presentation Generator')">
+                        <i class="fas fa-desktop"></i> Slides
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('email', 'Email Drafter')">
+                        <i class="fas fa-envelope-open-text"></i> Email
+                    </button>
                     
                     <div class="nav-label">Analysis</div>
-                    <button class="nav-btn-custom" onclick="showUserSection('code', 'Code Reviewer')"><i class="fas fa-code"></i> Code</button>
+                    <button class="nav-btn-custom" onclick="showUserSection('code', 'Code Reviewer')">
+                        <i class="fas fa-code"></i> Code
+                    </button>
 
                     <div class="nav-label">Utilities</div>
-                    <button class="nav-btn-custom" onclick="showUserSection('quiz', 'Quiz Maker')"><i class="fas fa-graduation-cap"></i> Quiz</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('pdf', 'PDF Editor')"><i class="fas fa-file-pdf"></i> PDF Tools</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('voice', 'Text to Speech')"><i class="fas fa-volume-high"></i> TTS</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('transcribe', 'Audio Transcriber')"><i class="fas fa-microphone-lines"></i> Transcriber</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('translate', 'Translator')"><i class="fas fa-language"></i> Translate</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('convert', 'File Converter')"><i class="fas fa-repeat"></i> Converter</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('compress', 'Image Compressor')"><i class="fas fa-compress"></i> Compress</button>
-                    <button class="nav-btn-custom" onclick="showUserSection('vidaudio', 'Video to Audio')"><i class="fas fa-music"></i> Video to MP3</button>
+                    <button class="nav-btn-custom" onclick="showUserSection('quiz', 'Quiz Maker')">
+                        <i class="fas fa-graduation-cap"></i> Quiz
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('pdf', 'PDF Editor')">
+                        <i class="fas fa-file-pdf"></i> PDF Tools
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('voice', 'Text to Speech')">
+                        <i class="fas fa-volume-high"></i> TTS
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('transcribe', 'Audio Transcriber')">
+                        <i class="fas fa-microphone-lines"></i> Transcriber
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('translate', 'Translator')">
+                        <i class="fas fa-language"></i> Translate
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('convert', 'File Converter')">
+                        <i class="fas fa-repeat"></i> Converter
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('compress', 'Image Compressor')">
+                        <i class="fas fa-compress"></i> Compress
+                    </button>
+                    <button class="nav-btn-custom" onclick="showUserSection('vidaudio', 'Video to Audio')">
+                        <i class="fas fa-music"></i> Video to MP3
+                    </button>
                 </div>
 
                 <div id="adminToolsNavigation" style="display:none;">
                     <div class="nav-label">Admin Controls</div>
-                    <button class="nav-btn-custom active" id="admin-btn-live" onclick="showAdminSection('live-load', 'System Monitor')"><i class="fas fa-server"></i> Live System Load</button>
-                    <button class="nav-btn-custom" id="admin-btn-feature" onclick="showAdminSection('feature-usage', 'Analytics')"><i class="fas fa-chart-pie"></i> Feature Usage</button>
-                    <button class="nav-btn-custom" id="admin-btn-reports" onclick="showAdminSection('reports', 'Reports Center')"><i class="fas fa-file-export"></i> System Reports</button>
+                    <button class="nav-btn-custom active" id="admin-btn-live" onclick="showAdminSection('live-load', 'System Monitor')">
+                        <i class="fas fa-server"></i> Live System Load
+                    </button>
+                    <button class="nav-btn-custom" id="admin-btn-feature" onclick="showAdminSection('feature-usage', 'Analytics')">
+                        <i class="fas fa-chart-pie"></i> Feature Usage
+                    </button>
+                    <button class="nav-btn-custom" id="admin-btn-reports" onclick="showAdminSection('reports', 'Reports Center')">
+                        <i class="fas fa-file-export"></i> System Reports
+                    </button>
                 </div>
             </div>
         </div>
 
         <div class="sidebar-footer">
+            
             <div id="adminStats" class="mb-3" style="display:none;">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <span class="text-xs fw-bold text-muted" style="font-size:10px;">SERVER LOAD</span>
@@ -357,6 +704,7 @@
         <div class="content-area">
             
             <div id="user-view-container">
+                
                 <div id="user-section-home" class="user-section">
                     <div class="welcome-banner">
                         <div>
@@ -375,37 +723,118 @@
                                 <div class="carousel-caption-custom">
                                     <div class="slide-icon"><i class="fas fa-file-signature"></i></div>
                                     <h3>Smart Meeting Minutes</h3>
-                                    <p>Transform messy notes into structured, professional meeting summaries instantly using advanced AI models.</p>
+                                    <p>Transform messy notes into structured summaries instantly.</p>
                                 </div>
                             </div>
                             <div class="carousel-item" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80');">
                                 <div class="carousel-caption-custom">
                                     <div class="slide-icon"><i class="fas fa-language"></i></div>
                                     <h3>Global Translator</h3>
-                                    <p>Break language barriers with accurate translation and transliteration across 20+ global languages.</p>
+                                    <p>Break language barriers with accurate translation.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div id="user-section-minutes" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Meeting Minutes</h4>
+                        <form id="minutesForm">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="notes" rows="8" placeholder="Paste messy notes here..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Generate Minutes</button>
+                            </div>
+                        </form>
+                        <div id="minutesOutput" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div id="user-section-ppt" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Presentation Generator</h4>
+                        <form id="makePptForm">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label class="form-label">Topic</label>
+                                    <input type="text" class="form-control" name="topic" placeholder="e.g. Q4 Sales Strategy">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Template (Optional)</label>
+                                    <input type="file" class="form-control" name="template_file" accept=".pptx">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Context / Source Text</label>
+                                <textarea class="form-control" name="source_text" rows="4" placeholder="Paste relevant content to include in slides..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Create Slides</button>
+                            </div>
+                        </form>
+                        <div id="pptOutput" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div id="user-section-email" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Email Drafter</h4>
+                        <form id="generateEmailForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">To (Name/Team)</label>
+                                    <input type="text" class="form-control" name="recipient">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Topic / Subject</label>
+                                    <input type="text" class="form-control" name="topic">
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Draft Email</button>
+                            </div>
+                        </form>
+                        <div id="emailOutput" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div id="user-section-code" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Code Reviewer</h4>
+                        <form id="codeForm">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="code" rows="10" style="font-family:'Consolas',monospace;background:#282c34;color:#abb2bf;" placeholder="// Paste your code here..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Review Code</button>
+                            </div>
+                        </form>
+                        <div id="codeOutput" class="mt-4"></div>
+                    </div>
+                </div>
+                
                 <div id="user-section-quiz" class="user-section" style="display:none;">
                     <div class="card-box">
                         <h4 class="fw-bold mb-4">Quiz Maker</h4>
                         <form id="quizForm">
-                            <div class="mb-3"><label>Questions</label><input type="number" class="form-control" name="count" value="5"></div>
-                            <div class="mb-3"><label>Topic</label><textarea class="form-control" name="topic" rows="5" placeholder="e.g. Python Basics"></textarea></div>
-                            <div class="text-end"><button type="submit" class="btn btn-primary">Generate Quiz</button></div>
+                            <div class="mb-3">
+                                <label>Number of Questions</label>
+                                <input type="number" class="form-control" name="count" value="5">
+                            </div>
+                            <div class="mb-3">
+                                <label>Topic</label>
+                                <textarea class="form-control" name="topic" rows="3" placeholder="e.g. Python Basics, History of Rome"></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Generate Quiz</button>
+                            </div>
                         </form>
                         <div id="quizOutput" class="mt-4"></div>
                     </div>
                 </div>
 
-                <div id="user-section-minutes" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Meeting Minutes</h4><form id="minutesForm"><div class="mb-3"><textarea class="form-control" name="notes" rows="8" placeholder="Paste notes..."></textarea></div><div class="text-end"><button type="submit" class="btn btn-primary">Generate</button></div></form><div id="minutesOutput" class="mt-4"></div></div></div>
-                <div id="user-section-ppt" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Presentation Generator</h4><form id="makePptForm"><div class="row mb-3"><div class="col-md-8"><label class="form-label">Topic</label><input type="text" class="form-control" name="topic"></div><div class="col-md-4"><label class="form-label">Template</label><input type="file" class="form-control" name="template_file" accept=".pptx"></div></div><div class="mb-3"><label class="form-label">Context</label><textarea class="form-control" name="source_text" rows="4"></textarea></div><div class="text-end"><button type="submit" class="btn btn-primary">Create</button></div></form><div id="pptOutput" class="mt-4"></div></div></div>
-                <div id="user-section-email" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Email Drafter</h4><form id="generateEmailForm"><div class="row mb-3"><div class="col-md-6"><label class="form-label">To</label><input type="text" class="form-control" name="recipient"></div><div class="col-md-6"><label class="form-label">Topic</label><input type="text" class="form-control" name="topic"></div></div><div class="text-end"><button type="submit" class="btn btn-primary">Draft</button></div></form><div id="emailOutput" class="mt-4"></div></div></div>
-                <div id="user-section-code" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Code Reviewer</h4><form id="codeForm"><div class="mb-3"><textarea class="form-control" name="code" rows="10" style="font-family:'Consolas',monospace;background:#282c34;color:#abb2bf;" placeholder="// Code here..."></textarea></div><div class="text-end"><button type="submit" class="btn btn-primary">Review</button></div></form><div id="codeOutput" class="mt-4"></div></div></div>
-                
                 <div id="user-section-pdf" class="user-section" style="display:none;">
                     <div class="card-box">
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -414,7 +843,9 @@
                         <form id="textToPdfForm">
                             <div id="editor-container"></div>
                             <input type="hidden" name="html_content" id="hiddenHtmlInput">
-                            <div class="text-end mt-3"><button type="submit" class="btn btn-primary">Download PDF</button></div>
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary">Download PDF</button>
+                            </div>
                         </form>
                         <div id="pdfOutput" class="mt-4"></div>
                     </div>
@@ -430,15 +861,35 @@
                                     <select class="form-select voice-list" name="target_language"></select>
                                 </div>
                             </div>
-                            
-                            <div class="mb-3"><textarea class="form-control" name="text" rows="4" placeholder="Enter text here..."></textarea></div>
-                            <div class="text-end"><button type="submit" class="btn btn-primary">Generate Audio</button></div>
+                            <div class="mb-3">
+                                <textarea class="form-control" name="text" rows="4" placeholder="Enter text here..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Generate Audio</button>
+                            </div>
                         </form>
                         <div id="audioOutput" class="mt-4"></div>
                     </div>
                 </div>
 
-                <div id="user-section-transcribe" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Transcriber</h4><form id="audioToTextForm"><div class="mb-3"><label>Language</label><select class="form-select" id="speechLangSelect" name="language"></select></div><div class="mb-3"><input type="file" class="form-control" name="file" accept=".wav"></div><div class="text-end"><button type="submit" class="btn btn-primary">Transcribe</button></div></form><div id="audioToTextOutput" class="mt-4"></div></div></div>
+                <div id="user-section-transcribe" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Audio Transcriber</h4>
+                        <form id="audioToTextForm">
+                            <div class="mb-3">
+                                <label>Audio Language</label>
+                                <select class="form-select" id="speechLangSelect" name="language"></select>
+                            </div>
+                            <div class="mb-3">
+                                <input type="file" class="form-control" name="file" accept=".wav,.mp3">
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Transcribe</button>
+                            </div>
+                        </form>
+                        <div id="audioToTextOutput" class="mt-4"></div>
+                    </div>
+                </div>
                 
                 <div id="user-section-translate" class="user-section" style="display:none;">
                     <div class="card-box">
@@ -454,16 +905,76 @@
                                     <select class="form-select language-list" name="target_language"></select>
                                 </div>
                             </div>
-                            <div class="mb-3"><textarea class="form-control" name="text" rows="4"></textarea></div>
-                            <div class="text-end"><button type="submit" class="btn btn-primary">Translate</button></div>
+                            <div class="mb-3">
+                                <textarea class="form-control" name="text" rows="4" placeholder="Text to translate..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Translate</button>
+                            </div>
                         </form>
                         <div id="translateOutput" class="mt-4"></div>
                     </div>
                 </div>
 
-                <div id="user-section-convert" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Converter</h4><form id="convertForm"><div class="row mb-3"><div class="col-md-8"><input type="file" class="form-control" name="file" required></div><div class="col-md-4"><select class="form-select" name="format"><option value="PNG">PNG</option><option value="JPG">JPG</option><option value="PDF">PDF</option><option value="WEBP">WEBP</option><option value="ICO">ICO</option></select></div></div><div class="text-end"><button type="submit" class="btn btn-primary">Convert</button></div></form><div id="convertOutput" class="mt-4"></div></div></div>
-                <div id="user-section-compress" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Compressor</h4><form id="compressForm"><div class="mb-3"><input type="file" class="form-control" name="file" required></div><div class="mb-3"><label>Target KB</label><input type="number" class="form-control" name="target_kb" value="500"></div><div class="text-end"><button type="submit" class="btn btn-primary">Compress</button></div></form><div id="compressOutput" class="mt-4"></div></div></div>
-                <div id="user-section-vidaudio" class="user-section" style="display:none;"><div class="card-box"><h4 class="fw-bold mb-4">Video to Audio</h4><form id="vidAudioForm"><div class="mb-3"><input type="file" class="form-control" name="file" accept="video/*" required></div><div class="text-end"><button type="submit" class="btn btn-primary">Extract</button></div></form><div id="vidAudioOutput" class="mt-4"></div></div></div>
+                <div id="user-section-convert" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Converter</h4>
+                        <form id="convertForm">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <input type="file" class="form-control" name="file" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" name="format">
+                                        <option value="PNG">PNG</option>
+                                        <option value="JPG">JPG</option>
+                                        <option value="PDF">PDF</option>
+                                        <option value="WEBP">WEBP</option>
+                                        <option value="ICO">ICO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Convert</button>
+                            </div>
+                        </form>
+                        <div id="convertOutput" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div id="user-section-compress" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Compressor</h4>
+                        <form id="compressForm">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" name="file" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Target Size (KB)</label>
+                                <input type="number" class="form-control" name="target_kb" value="500">
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Compress</button>
+                            </div>
+                        </form>
+                        <div id="compressOutput" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div id="user-section-vidaudio" class="user-section" style="display:none;">
+                    <div class="card-box">
+                        <h4 class="fw-bold mb-4">Video to Audio</h4>
+                        <form id="vidAudioForm">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" name="file" accept="video/*" required>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Extract</button>
+                            </div>
+                        </form>
+                        <div id="vidAudioOutput" class="mt-4"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="admin-view-container" style="display:none;">
@@ -480,14 +991,18 @@
                             <h6 class="fw-bold mb-0">Live CPU/RAM Load</h6>
                             <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Monitoring Active</span>
                         </div>
-                        <div style="height: 400px;"><canvas id="systemChart"></canvas></div>
+                        <div style="height: 400px;">
+                            <canvas id="systemChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
                 <div id="admin-section-feature-usage" class="admin-section" style="display:none;">
                     <div class="card-box">
                         <h6 class="fw-bold mb-4">AI Feature Usage Distribution</h6>
-                        <div style="height: 400px; display:flex; justify-content:center;"><canvas id="modelChart"></canvas></div>
+                        <div style="height: 400px; display:flex; justify-content:center;">
+                            <canvas id="modelChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -495,7 +1010,9 @@
                     <div class="card-box">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h6 class="fw-bold mb-0">System Reports</h6>
-                            <button onclick="downloadReportAction()" class="btn btn-primary"><i class="fas fa-download me-2"></i>Generate New Report</button>
+                            <button onclick="downloadReportAction()" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i>Generate New Report
+                            </button>
                         </div>
                         
                         <div class="table-responsive">
@@ -524,22 +1041,51 @@
         </footer>
     </main>
 
-    <div class="floating-chat-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
+    <div class="floating-chat-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
     <div class="chat-window" id="chatWindow">
-        <div class="chat-header"><span>AI Assistant</span><button class="btn btn-sm text-white" onclick="toggleChat()"><i class="fas fa-times"></i></button></div>
-        <div class="chat-body" id="chatBody"><div class="chat-msg chat-msg-ai">Hello! How can I help you today?</div></div>
-        <div class="chat-footer"><input type="text" class="form-control border-0 bg-light" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()"><button class="btn btn-primary rounded-circle shadow-sm" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button></div>
+        <div class="chat-header">
+            <span>AI Assistant</span>
+            <div>
+                <button class="btn btn-sm text-white" onclick="clearChatMemory()" title="Clear Chat">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn btn-sm text-white" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg chat-msg-ai">Hello! How can I help you today?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" class="form-control border-0 bg-light" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()">
+            <button class="btn btn-primary rounded-circle shadow-sm" onclick="sendChat()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
     </div>
 
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-          <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold ms-2 mt-2">Admin Login</h5><button type="button" class="btn-close me-2 mt-2" data-bs-dismiss="modal"></button></div>
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold ms-2 mt-2">Admin Login</h5>
+            <button type="button" class="btn-close me-2 mt-2" data-bs-dismiss="modal"></button>
+          </div>
           <div class="modal-body p-4 pt-3">
             <div id="loginAlert" class="alert alert-danger d-none small py-2">Invalid credentials</div>
             <form id="loginForm">
-              <div class="mb-3"><label class="form-label small fw-bold text-muted">USERNAME</label><input type="text" class="form-control" id="usernameInput" required></div>
-              <div class="mb-4"><label class="form-label small fw-bold text-muted">PASSWORD</label><input type="password" class="form-control" id="passwordInput" required></div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">USERNAME</label>
+                <input type="text" class="form-control" id="usernameInput" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label small fw-bold text-muted">PASSWORD</label>
+                <input type="password" class="form-control" id="passwordInput" required>
+              </div>
               <button type="submit" class="btn btn-primary w-100 py-2">Access Dashboard</button>
             </form>
           </div>
@@ -551,43 +1097,95 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
-        // --- 1. SET DATE ---
+        // =======================================================
+        // 1. INITIAL SETUP
+        // =======================================================
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 
-        // --- 2. RESPONSIVE SIDEBAR LOGIC ---
+        // Initialize Quill Editor for PDF Tool
+        var quill = new Quill('#editor-container', { 
+            theme: 'snow', 
+            modules: { toolbar: [['bold', 'italic', 'underline'], [{'list':'ordered'}, {'list':'bullet'}], ['clean']] } 
+        });
+
+        // =======================================================
+        // 2. SIDEBAR LOGIC
+        // =======================================================
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('show');
             overlay.classList.toggle('show');
         }
-        function closeSidebarOnMobile() { if (window.innerWidth <= 991) toggleSidebar(); }
 
-        // --- 3. CHARTS CONFIGURATION ---
-        Chart.register(ChartDataLabels);
-        const ctxSystem = document.getElementById('systemChart').getContext('2d');
-        const systemChart = new Chart(ctxSystem, { 
-            type: 'line', 
-            data: { labels: Array(20).fill(''), datasets: [{ label: 'Load', data: Array(20).fill(0), borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.05)', borderWidth: 2, fill: true, pointRadius: 0, tension: 0.4 }] }, 
-            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { display: true, borderDash: [5, 5] } }, x: { grid: { display: false } } } } 
+        function closeSidebarOnMobile() { 
+            if (window.innerWidth <= 991) toggleSidebar(); 
+        }
+
+        // =======================================================
+        // 3. LANGUAGE DROPDOWN POPULATION
+        // =======================================================
+        const globalLangs = [
+            {c:'en', n:'English'}, {c:'hi', n:'Hindi'}, {c:'ta', n:'Tamil'}, 
+            {c:'ml', n:'Malayalam'}, {c:'te', n:'Telugu'}, {c:'kn', n:'Kannada'},
+            {c:'es', n:'Spanish'}, {c:'fr', n:'French'}, {c:'de', n:'German'},
+            {c:'zh', n:'Chinese'}, {c:'ja', n:'Japanese'}, {c:'ru', n:'Russian'}
+        ];
+        
+        // Fill translation and voice dropdowns
+        document.querySelectorAll('.language-list, .language-list-auto, .voice-list').forEach(sel => {
+            sel.innerHTML = '';
+            if(sel.classList.contains('language-list-auto')) sel.add(new Option("Auto-detect", "Auto-detect"));
+            globalLangs.forEach(l => sel.add(new Option(l.n, l.c)));
         });
 
-        const ctxModel = document.getElementById('modelChart').getContext('2d');
-        const modelChart = new Chart(ctxModel, { 
-            type: 'doughnut', 
-            data: { labels: ['Text', 'Audio', 'Code', 'Quiz', 'Chat'], datasets: [{ data: [1, 1, 1, 1, 1], backgroundColor: ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'], borderWidth: 0 }] }, 
-            options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' }, datalabels: { display: false } } } 
-        });
+        // Fill Speech Recognition specific dropdown (EXPANDED LIST)
+        const sl = document.getElementById('speechLangSelect');
+        if(sl) { 
+            sl.innerHTML = '';
+            const speechLanguages = [
+                {c: 'en-US', n: 'English (US)'},
+                {c: 'en-GB', n: 'English (UK)'},
+                {c: 'en-IN', n: 'English (India)'},
+                {c: 'hi-IN', n: 'Hindi'},
+                {c: 'ta-IN', n: 'Tamil'},
+                {c: 'te-IN', n: 'Telugu'},
+                {c: 'kn-IN', n: 'Kannada'},
+                {c: 'ml-IN', n: 'Malayalam'},
+                {c: 'mr-IN', n: 'Marathi'},
+                {c: 'bn-IN', n: 'Bengali'},
+                {c: 'gu-IN', n: 'Gujarati'},
+                {c: 'es-ES', n: 'Spanish'},
+                {c: 'fr-FR', n: 'French'},
+                {c: 'de-DE', n: 'German'},
+                {c: 'it-IT', n: 'Italian'},
+                {c: 'pt-PT', n: 'Portuguese'},
+                {c: 'ru-RU', n: 'Russian'},
+                {c: 'zh-CN', n: 'Chinese (Simplified)'},
+                {c: 'ja-JP', n: 'Japanese'},
+                {c: 'ko-KR', n: 'Korean'},
+                {c: 'ar-SA', n: 'Arabic (Saudi Arabia)'}
+            ];
+            speechLanguages.forEach(x => sl.add(new Option(x.n, x.c))); 
+        }
 
-        // --- 4. NAVIGATION LOGIC ---
+        // =======================================================
+        // 4. NAVIGATION LOGIC
+        // =======================================================
         function showUserSection(sectionId, headerTitle) {
             document.getElementById('headerTitle').innerText = headerTitle;
+            // Hide all sections
             document.querySelectorAll('.user-section').forEach(el => el.style.display = 'none');
+            // Show target
             document.getElementById(`user-section-${sectionId}`).style.display = 'block';
             
+            // Update Sidebar Active State
             document.querySelectorAll('.nav-btn-custom').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`button[onclick*="'${sectionId}'"]`);
+            if(activeBtn) activeBtn.classList.add('active');
             
             closeSidebarOnMobile();
         }
@@ -597,6 +1195,7 @@
             document.querySelectorAll('.admin-section').forEach(el => el.style.display = 'none');
             document.getElementById(`admin-section-${sectionId}`).style.display = 'block';
             
+            // Update Admin Nav Active State
             document.querySelectorAll('#adminToolsNavigation .nav-btn-custom').forEach(btn => btn.classList.remove('active'));
             if(sectionId === 'live-load') document.getElementById('admin-btn-live').classList.add('active');
             if(sectionId === 'feature-usage') document.getElementById('admin-btn-feature').classList.add('active');
@@ -605,10 +1204,188 @@
             closeSidebarOnMobile();
         }
 
-        // --- 5. ADMIN REPORTS LOGIC ---
+        // =======================================================
+        // 5. AUTHENTICATION LOGIC
+        // =======================================================
+        let isAdmin = false;
+
+        async function checkAuthStatus() {
+            try {
+                const res = await fetch('/check-auth');
+                const data = await res.json();
+                isAdmin = data.is_admin;
+                updateAdminUI();
+            } catch(e) { console.error("Auth check failed", e); }
+        }
+
+        function updateAdminUI() {
+            const userNav = document.getElementById('userToolsNavigation');
+            const adminNav = document.getElementById('adminToolsNavigation');
+            const userContainer = document.getElementById('user-view-container');
+            const adminContainer = document.getElementById('admin-view-container');
+            const authContainer = document.getElementById('authContainer');
+            const adminStats = document.getElementById('adminStats');
+
+            if (isAdmin) {
+                // Show Admin View
+                userNav.style.display = 'none';
+                adminNav.style.display = 'block';
+                userContainer.style.display = 'none';
+                adminContainer.style.display = 'block';
+                if(adminStats) adminStats.style.display = 'block';
+                
+                showAdminSection('live-load', 'System Monitor');
+
+                authContainer.innerHTML = `
+                    <div class="admin-profile-card">
+                        <div class="admin-info">
+                            <div class="admin-avatar">A</div>
+                            <div class="admin-text"><h6>Admin</h6><small>Online</small></div>
+                        </div>
+                        <button onclick="logout()" class="btn-logout" title="Sign Out">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>`;
+            } else {
+                // Show User View
+                userNav.style.display = 'block';
+                adminNav.style.display = 'none';
+                userContainer.style.display = 'block';
+                adminContainer.style.display = 'none';
+                if(adminStats) adminStats.style.display = 'none';
+                
+                showUserSection('home', 'Dashboard');
+
+                authContainer.innerHTML = `
+                    <button class="btn-login-sidebar" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="fas fa-lock"></i> Admin Login
+                    </button>`;
+            }
+        }
+
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            isAdmin = false;
+            location.reload();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const u = document.getElementById('usernameInput').value;
+            const p = document.getElementById('passwordInput').value;
+            
+            try {
+                const res = await fetch('/login', { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify({username: u, password: p}) 
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    isAdmin = true;
+                    updateAdminUI();
+                    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                    this.reset();
+                    loadReportHistory();
+                } else {
+                    document.getElementById('loginAlert').classList.remove('d-none');
+                }
+            } catch(e) {}
+        });
+
+        checkAuthStatus();
+
+        // =======================================================
+        // 6. CHARTS & STATS
+        // =======================================================
+        Chart.register(ChartDataLabels);
+        
+        // System Load Chart
+        const ctxSystem = document.getElementById('systemChart').getContext('2d');
+        const systemChart = new Chart(ctxSystem, { 
+            type: 'line', 
+            data: { 
+                labels: Array(20).fill(''), 
+                datasets: [{ 
+                    label: 'Load', 
+                    data: Array(20).fill(0), 
+                    borderColor: '#4f46e5', 
+                    backgroundColor: 'rgba(79, 70, 229, 0.05)', 
+                    borderWidth: 2, 
+                    fill: true, 
+                    pointRadius: 0, 
+                    tension: 0.4 
+                }] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                animation: { duration: 0 }, 
+                plugins: { legend: { display: false }, datalabels: { display: false } }, 
+                scales: { y: { beginAtZero: true, max: 100, grid: { display: true, borderDash: [5, 5] } }, x: { grid: { display: false } } } 
+            } 
+        });
+
+        // Feature Usage Chart
+        const ctxModel = document.getElementById('modelChart').getContext('2d');
+        const modelChart = new Chart(ctxModel, { 
+            type: 'doughnut', 
+            data: { 
+                labels: ['Text', 'Audio', 'Code', 'Quiz', 'Chat'], 
+                datasets: [{ 
+                    data: [1, 1, 1, 1, 1], 
+                    backgroundColor: ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'], 
+                    borderWidth: 0 
+                }] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                cutout: '70%', 
+                plugins: { legend: { position: 'bottom' }, datalabels: { display: false } } 
+            } 
+        });
+
+        // Stats Loop
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                if (isAdmin) {
+                    systemChart.data.datasets[0].data.push(data.cpu || 0);
+                    systemChart.data.datasets[0].data.shift();
+                    systemChart.update();
+                    
+                    const cpuText = document.getElementById('cpu-load-text');
+                    const cpuBar = document.getElementById('cpu-bar');
+                    if(cpuText) cpuText.innerText = (data.cpu || 0) + '%';
+                    if(cpuBar) cpuBar.style.width = (data.cpu || 0) + '%';
+                }
+                
+                if (data.usage) {
+                    modelChart.data.datasets[0].data = [
+                        data.usage.text_gen, 
+                        data.usage.audio_gen, 
+                        data.usage.code_review, 
+                        data.usage.quiz_gen, 
+                        data.usage.chat_msgs || 0
+                    ];
+                    modelChart.update();
+                }
+            } catch (e) { }
+        }
+        setInterval(updateStats, 2000);
+
+        // =======================================================
+        // 7. REPORTS LOGIC
+        // =======================================================
         function loadReportHistory() {
             const history = JSON.parse(localStorage.getItem('adminReportHistory') || '[]');
             const tbody = document.getElementById('reportHistoryTable');
+            if (!tbody) return;
+            
             if (history.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No history available</td></tr>';
                 return;
@@ -628,171 +1405,27 @@
             setTimeout(loadReportHistory, 1000);
         }
 
-        // --- 6. AUTHENTICATION ---
-        let isAdmin = false;
-
-        async function checkAuthStatus() {
-            try {
-                const res = await fetch('/check-auth');
-                const data = await res.json();
-                isAdmin = data.is_admin;
-                updateAdminUI();
-            } catch(e) {}
-        }
-
-        function updateAdminUI() {
-            const userNav = document.getElementById('userToolsNavigation');
-            const adminNav = document.getElementById('adminToolsNavigation');
-            const userContainer = document.getElementById('user-view-container');
-            const adminContainer = document.getElementById('admin-view-container');
-            const authContainer = document.getElementById('authContainer');
-            const adminStats = document.getElementById('adminStats');
-
-            if (isAdmin) {
-                userNav.style.display = 'none';
-                adminNav.style.display = 'block';
-                userContainer.style.display = 'none';
-                adminContainer.style.display = 'block';
-                if(adminStats) adminStats.style.display = 'block';
-                
-                showAdminSection('live-load', 'System Monitor');
-                loadReportHistory();
-
-                authContainer.innerHTML = `
-                    <div class="admin-profile-card">
-                        <div class="admin-info"><div class="admin-avatar">A</div><div class="admin-text"><h6>Admin</h6><small>Online</small></div></div>
-                        <button onclick="logout()" class="btn-logout" title="Sign Out"><i class="fas fa-sign-out-alt"></i></button>
-                    </div>`;
-            } else {
-                userNav.style.display = 'block';
-                adminNav.style.display = 'none';
-                userContainer.style.display = 'block';
-                adminContainer.style.display = 'none';
-                if(adminStats) adminStats.style.display = 'none';
-                
-                showUserSection('home', 'Dashboard');
-
-                authContainer.innerHTML = `
-                    <button class="btn-login-sidebar" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="fas fa-lock"></i> Admin Login
-                    </button>
-                `;
-            }
-        }
-
-        async function logout() { await fetch('/logout', { method: 'POST' }); isAdmin = false; location.reload(); }
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const u = document.getElementById('usernameInput').value; const p = document.getElementById('passwordInput').value;
-            try {
-                const res = await fetch('/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u, password: p}) });
-                const data = await res.json();
-                if (data.success) { isAdmin = true; updateAdminUI(); bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide(); this.reset(); } 
-                else { document.getElementById('loginAlert').classList.remove('d-none'); }
-            } catch(e) {}
-        });
-
-        checkAuthStatus();
-
-        // --- 7. STATS LOOP ---
-        async function updateStats() {
-            try {
-                const response = await fetch('/api/stats');
-                const data = await response.json();
-                if (isAdmin) {
-                    systemChart.data.datasets[0].data.push(data.cpu || 0); systemChart.data.datasets[0].data.shift(); systemChart.update();
-                    const cpuText = document.getElementById('cpu-load-text');
-                    const cpuBar = document.getElementById('cpu-bar');
-                    if(cpuText) cpuText.innerText = (data.cpu || 0) + '%';
-                    if(cpuBar) cpuBar.style.width = (data.cpu || 0) + '%';
-                }
-                if (data.usage) { modelChart.data.datasets[0].data = [data.usage.text_gen, data.usage.audio_gen, data.usage.code_review, data.usage.quiz_gen, data.usage.chat_msgs || 0]; modelChart.update(); }
-            } catch (e) { }
-        }
-        setInterval(updateStats, 2000);
-
-        // --- 8. LANGUAGES & FORMS ---
-        const genericLanguages = [
-            {code:'en',name:'English'}, 
-            {code:'ml',name:'Malayalam'}, 
-            {code:'hi',name:'Hindi'}, 
-            {code:'ta',name:'Tamil'}, 
-            {code:'te',name:'Telugu'}, 
-            {code:'kn',name:'Kannada'}, 
-            {code:'es',name:'Spanish'}, 
-            {code:'fr',name:'French'}, 
-            {code:'de',name:'German'}, 
-            {code:'zh',name:'Chinese'}, 
-            {code:'ja',name:'Japanese'}
-        ];
-
-        // Ensure we send correct codes for VOICE generation
-        const voiceLanguages = [
-            {code:'en',name:'English'}, 
-            {code:'hi',name:'Hindi (India)'}, 
-            {code:'ta',name:'Tamil'}, 
-            {code:'te',name:'Telugu'}, 
-            {code:'kn',name:'Kannada'}, 
-            {code:'ml',name:'Malayalam'}, 
-            {code:'es',name:'Spanish'}, 
-            {code:'fr',name:'French'}, 
-            {code:'de',name:'German'}
-        ];
-
-        function initLanguages() {
-            // Populate generic lists (Used for Translation Target)
-            document.querySelectorAll('.language-list').forEach(s => { 
-                s.innerHTML=''; 
-                genericLanguages.forEach(l => s.add(new Option(l.name, l.code))); 
-            });
-            
-            // Populate Auto lists (Used for Translation Source)
-            document.querySelectorAll('.language-list-auto').forEach(s => { 
-                s.innerHTML=''; 
-                s.add(new Option("Auto-detect", "Auto-detect")); 
-                genericLanguages.forEach(l => s.add(new Option(l.name, l.code))); 
-            });
-            
-            // Populate Voice Specific List (Used for Text-to-Speech)
-            document.querySelectorAll('.voice-list').forEach(s => { 
-                s.innerHTML=''; 
-                voiceLanguages.forEach(l => s.add(new Option(l.name, l.code))); 
-            });
-
-            const speechSelect = document.getElementById('speechLangSelect');
-            if(speechSelect) { 
-                speechSelect.innerHTML=''; 
-                // Add commonly used codes for speech recognition
-                const speechLangs = [{code:'en-US',name:'English (US)'}, {code:'en-IN',name:'English (India)'}, {code:'hi-IN',name:'Hindi'}, {code:'ta-IN',name:'Tamil'}];
-                speechLangs.forEach(l => speechSelect.add(new Option(l.name, l.code))); 
-            }
-        }
-        initLanguages();
-
-        var quill = new Quill('#editor-container', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline'], [{'list':'ordered'}, {'list':'bullet'}]] } });
-        
-        // --- CLEANED UP: REMOVED TRANSLATE TOGGLE LISTENER ---
-        // (Previously here was a listener for 'translateCheck', but we deleted that element, so the listener is gone to prevent errors)
-
-        // --- CRITICAL FORM HANDLING LOGIC ---
+        // =======================================================
+        // 8. FORM HANDLING
+        // =======================================================
         async function handleForm(formId, url, outputId) {
             const formElement = document.getElementById(formId);
-            if (!formElement) return; // Guard clause in case form is missing
+            if (!formElement) return;
 
             formElement.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // If PDF form, put Quill content into hidden input
+                // Specific logic for PDF
                 if(formId === 'textToPdfForm') document.getElementById('hiddenHtmlInput').value = quill.root.innerHTML;
                 
                 const btn = this.querySelector('button[type="submit"]'); 
                 const originalBtnText = btn.innerHTML;
                 const output = document.getElementById(outputId);
                 
+                // Loading State
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...'; 
                 btn.disabled = true;
-                output.innerHTML = ""; // Clear previous results
+                output.innerHTML = ""; 
 
                 const formData = new FormData(this);
                 
@@ -801,65 +1434,52 @@
                     const data = await res.json(); 
                     
                     if(data.success) {
-                        let content = '';
+                        let contentHtml = '';
                         
-                        // 1. DOWNLOADABLE FILES (PDF, PPT, AUDIO)
+                        // Handle File Downloads
                         if(data.file_url) {
                             if (url.includes('text-to-audio') || url.includes('video-to-audio')) {
-                                // Audio Player
-                                content += `
+                                contentHtml += `
                                 <div class="alert alert-success border-0 shadow-sm mb-3">
                                     <h6 class="alert-heading fw-bold mb-2"><i class="fas fa-music me-2"></i>Audio Ready</h6>
                                     <audio controls autoplay style="width: 100%;">
                                         <source src="${data.file_url}" type="audio/mpeg">
-                                        Your browser does not support the audio element.
                                     </audio>
                                     <div class="mt-2 text-end">
-                                        <a href="${data.file_url}" download class="btn btn-sm btn-outline-success">Download Audio</a>
+                                        <a href="${data.file_url}" download class="btn btn-sm btn-outline-success">Download</a>
                                     </div>
                                 </div>`;
                             } else {
-                                // Generic Download (PDF, PPT)
-                                content += `
+                                contentHtml += `
                                 <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-3">
                                     <i class="fas fa-check-circle me-3 fs-4"></i>
                                     <div>
                                         <h6 class="mb-1 fw-bold">Success!</h6>
-                                        <a href="${data.file_url}" download class="text-decoration-none stretched-link">Click here to download your file</a>
+                                        <a href="${data.file_url}" download class="text-decoration-none stretched-link">Download your file</a>
                                     </div>
                                 </div>`;
                             }
                         }
                         
-                        // 2. TEXT/HTML CONTENT (Quiz, Emails, etc.)
-                        const contentMap = {
-                            'quiz': data.quiz,              // HTML with Answer Key Table
-                            'minutes': data.minutes,        // Text
-                            'email_content': data.email_content, // Text
-                            'review': data.review,          // Text
-                            'text': data.text,              // Text
-                            'translation': data.translation // Text
-                        };
-
-                        for (const [key, val] of Object.entries(contentMap)) {
-                            if (val) {
-                                // If it's the QUIZ, render directly (it contains HTML tags)
-                                if (key === 'quiz') {
-                                    content += `<div class="result-box result-box-html bg-white border shadow-sm p-4">${val}</div>`;
-                                } else {
-                                    // Otherwise use pre-wrap to preserve formatting
-                                    content += `<div class="result-box result-box-text">${val}</div>`;
-                                }
+                        // Handle Text/HTML Content
+                        const rawContent = data.quiz || data.minutes || data.email_content || data.review || data.text || data.translation;
+                        
+                        if (rawContent) {
+                            if (data.quiz) {
+                                // Render raw HTML for Quiz tables (uses the CSS fixed above)
+                                contentHtml += `<div class="result-box result-box-html bg-white border shadow-sm p-4">${rawContent}</div>`;
+                            } else {
+                                // Render Markdown for everything else
+                                contentHtml += `<div class="result-box result-box-text">${marked.parse(rawContent)}</div>`;
                             }
                         }
 
-                        output.innerHTML = content; 
-                        updateStats();
+                        output.innerHTML = contentHtml;
                     } else { 
                         output.innerHTML = `<div class="alert alert-danger shadow-sm border-0"><i class="fas fa-exclamation-triangle me-2"></i>${data.error}</div>`; 
                     }
                 } catch(err) { 
-                    output.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`; 
+                    output.innerHTML = `<div class="alert alert-danger">Connection Error: ${err.message}</div>`; 
                 } finally { 
                     btn.innerHTML = originalBtnText; 
                     btn.disabled = false; 
@@ -884,19 +1504,45 @@
         ];
         forms.forEach(f => handleForm(f[0], f[1], f[2]));
 
-        // --- 9. CHAT ---
+        // =======================================================
+        // 9. CHAT LOGIC
+        // =======================================================
         function toggleChat() { 
             const w = document.getElementById('chatWindow'); 
             const isFlex = w.style.display === 'flex';
             w.style.display = isFlex ? 'none' : 'flex'; 
             if(!isFlex) document.getElementById('chatInput').focus(); 
         }
+
         async function sendChat() {
-            const i = document.getElementById('chatInput'); const m = i.value.trim(); if(!m) return;
-            const b = document.getElementById('chatBody'); b.innerHTML += `<div class="chat-msg chat-msg-user">${m}</div>`; i.value=''; b.scrollTop = b.scrollHeight;
-            try { const res = await fetch('/chat', {method:'POST', body:new URLSearchParams({message:m})}); const d = await res.json(); b.innerHTML += `<div class="chat-msg chat-msg-ai">${d.success?d.response.replace(/\n/g,'<br>'):'Error'}</div>`; } catch { b.innerHTML += `<div class="chat-msg chat-msg-ai text-danger">Error</div>`; } b.scrollTop = b.scrollHeight;
+            const i = document.getElementById('chatInput'); 
+            const m = i.value.trim(); 
+            if(!m) return;
+            
+            const b = document.getElementById('chatBody'); 
+            b.innerHTML += `<div class="chat-msg chat-msg-user">${m}</div>`; 
+            i.value=''; 
+            b.scrollTop = b.scrollHeight;
+            
+            try { 
+                const res = await fetch('/chat', {method:'POST', body:new URLSearchParams({message:m})}); 
+                const d = await res.json(); 
+                
+                if (d.success) {
+                    b.innerHTML += `<div class="chat-msg chat-msg-ai">${marked.parse(d.response)}</div>`;
+                } else {
+                    b.innerHTML += `<div class="chat-msg chat-msg-ai text-danger">Error processing request</div>`;
+                }
+            } catch { 
+                b.innerHTML += `<div class="chat-msg chat-msg-ai text-danger">Server Offline</div>`; 
+            } 
+            b.scrollTop = b.scrollHeight;
         }
-        document.getElementById('chatInput').addEventListener('keypress', function(e){ if(e.key==='Enter') sendChat(); });
+
+        async function clearChatMemory() {
+            await fetch('/clear-chat', {method:'POST'});
+            document.getElementById('chatBody').innerHTML = '<div class="chat-msg chat-msg-ai">Memory cleared. How can I help?</div>';
+        }
     </script>
 </body>
 </html>
