@@ -8,3 +8,4 @@ SpeechRecognition
 Pillow
 moviepy
 psutil
+gunicorn
