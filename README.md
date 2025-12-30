@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 AI Workspace Enterprise
 
 **AI Workspace Enterprise** is a comprehensive productivity suite powered by **Google Gemini 2.5 & 2.0 Flash**. It integrates **10 powerful AI tools** into a single, dashboard-style web application built with Python (Flask) and Bootstrap 5.
@@ -48,3 +49,7 @@ Follow these steps to run the project locally.
 ```bash
 git clone [https://github.com/Vishnukk05/Ai_Tool.git](https://github.com/Vishnukk05/Ai_Tool.git)
 cd Ai_Tool
+=======
+# AI-all-in-one-tool
+ai all merged tool
+>>>>>>> a8b4fdb791b56230254150bcd84b9c79c2004ab7
