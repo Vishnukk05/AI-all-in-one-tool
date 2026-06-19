@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Code Theme Demo</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .demo-section {
+      margin-bottom: 60px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .demo-item {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .demo-item:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-4px);
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .color-box {
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .color-box:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .code-example {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+      overflow-x: auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    .syntax-demo {
+      font-family: 'Fira Code', monospace;
+      line-height: 1.6;
+    }
+
+    .line {
+      margin-bottom: 8px;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+      margin: 40px 0;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 12px 0;
+      padding-left: 30px;
+      position: relative;
+      color: var(--text-secondary);
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .input-group {
+      margin-top: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 5px 5px 5px 0;
+    }
+
+    .container {
+      animation: fadeIn 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="animate-fade-in">
+      <h1>🎨 Modern Code Theme Demo</h1>
+      <p style="color: var(--text-secondary); font-size: 1.1em; margin-top: 10px;">
+        Explore the beautiful, modern design theme with interactive components
+      </p>
+    </div>
+
+    <hr>
+
+    <!-- Color Palette Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>🎯 Color Palette</h2>
+      <p>Our vibrant and modern color scheme designed for code and UI elements</p>
+      
+      <div class="color-grid">
+        <div class="color-box" style="background: #6366f1;">Primary</div>
+        <div class="color-box" style="background: #a855f7;">Purple</div>
+        <div class="color-box" style="background: #06b6d4;">Cyan</div>
+        <div class="color-box" style="background: #10b981;">Green</div>
+        <div class="color-box" style="background: #f97316;">Orange</div>
+        <div class="color-box" style="background: #ec4899;">Pink</div>
+        <div class="color-box" style="background: #0f172a;">Dark BG</div>
+        <div class="color-box" style="background: #1e293b;">Card BG</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Buttons Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>🔘 Interactive Buttons</h2>
+      <p>Hover over buttons to see smooth animations and glowing effects</p>
+      
+      <div class="btn-group">
+        <button>Primary Button</button>
+        <button style="background: linear-gradient(135deg, #a855f7, #7c3aed);">Secondary</button>
+        <button style="background: linear-gradient(135deg, #10b981, #059669);">Success</button>
+        <button style="background: linear-gradient(135deg, #f97316, #ea580c);">Warning</button>
+        <button style="background: linear-gradient(135deg, #ef4444, #dc2626);">Danger</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Syntax Highlighting Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>💻 Syntax Highlighting</h2>
+      <p>Beautiful code highlighting with semantic colors</p>
+      
+      <div class="code-example">
+        <div class="syntax-demo">
+          <div class="line">
+            <span class="keyword">function</span>
+            <span class="function">calculateSum</span>(a, b) {
+          </div>
+          <div class="line" style="padding-left: 20px;">
+            <span class="comment">// Add two numbers</span>
+          </div>
+          <div class="line" style="padding-left: 20px;">
+            <span class="keyword">return</span>
+            <span class="number">a</span>
+            <span class="operator">+</span>
+            <span class="number">b</span>;
+          </div>
+          <div class="line">}</div>
+          <div class="line"></div>
+          <div class="line">
+            <span class="keyword">const</span>
+            message = <span class="string">"Hello, World!"</span>;
+          </div>
+          <div class="line">
+            <span class="function">console.log</span>(message);
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Cards Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>🎴 Card Components</h2>
+      <p>Hover over cards to see the interactive effects</p>
+      
+      <div class="demo-grid">
+        <div class="card">
+          <h3 style="margin-top: 0;">Feature One</h3>
+          <p style="color: var(--text-secondary);">Beautiful gradient backgrounds with smooth transitions and glowing hover effects.</p>
+          <button style="width: 100%;">Learn More</button>
+        </div>
+        
+        <div class="card">
+          <h3 style="margin-top: 0;">Feature Two</h3>
+          <p style="color: var(--text-secondary);">Responsive design that works perfectly on mobile, tablet, and desktop devices.</p>
+          <button style="width: 100%;">Explore</button>
+        </div>
+        
+        <div class="card">
+          <h3 style="margin-top: 0;">Feature Three</h3>
+          <p style="color: var(--text-secondary);">Smooth animations and transitions for an engaging user experience.</p>
+          <button style="width: 100%;">Discover</button>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Forms Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>📝 Form Elements</h2>
+      <p>Click on inputs to see the focus states with beautiful animations</p>
+      
+      <div class="input-group">
+        <label>Name</label>
+        <input type="text" placeholder="Enter your name">
+      </div>
+      
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" placeholder="Enter your email">
+      </div>
+      
+      <div class="input-group">
+        <label>Message</label>
+        <textarea rows="4" placeholder="Enter your message..."></textarea>
+      </div>
+      
+      <div class="input-group">
+        <label>Category</label>
+        <select>
+          <option>Select a category...</option>
+          <option>Development</option>
+          <option>Design</option>
+          <option>Documentation</option>
+        </select>
+      </div>
+      
+      <div class="btn-group" style="margin-top: 20px;">
+        <button>Submit</button>
+        <button style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);">Cancel</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Features Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>✨ Theme Features</h2>
+      
+      <ul class="feature-list">
+        <li>🌙 Dark mode with beautiful gradients and shadows</li>
+        <li>⚡ Smooth transitions and animations (0.3s ease)</li>
+        <li>🎨 Vibrant color palette for syntax highlighting</li>
+        <li>📱 Fully responsive design for all devices</li>
+        <li>🎯 Semantic HTML with accessibility in mind</li>
+        <li>🔧 CSS custom properties for easy customization</li>
+        <li>💫 Glassmorphism effects with backdrop blur</li>
+        <li>🌟 Glowing shadows and hover effects</li>
+        <li>🎭 Light mode support included</li>
+        <li>⌨️ Keyboard accessible components</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <!-- Badges Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>🏷️ Badges & Tags</h2>
+      
+      <div>
+        <span class="badge">Modern</span>
+        <span class="badge" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">Beautiful</span>
+        <span class="badge" style="background: linear-gradient(135deg, #10b981, #059669);">Responsive</span>
+        <span class="badge" style="background: linear-gradient(135deg, #f97316, #ea580c);">Fast</span>
+        <span class="badge" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">Interactive</span>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Links Section -->
+    <div class="demo-section animate-slide-in">
+      <h2>🔗 Interactive Links</h2>
+      <p>Hover over links to see the animated underline effect</p>
+      
+      <p style="margin-top: 20px;">
+        <a href="#demo">Learn more about the theme</a><br>
+        <a href="#docs">View documentation</a><br>
+        <a href="#github">Check on GitHub</a><br>
+      </p>
+    </div>
+
+    <hr>
+
+    <!-- Footer -->
+    <div class="demo-section" style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+      <p>🎉 Theme created with love for beautiful code and UI</p>
+      <p style="font-size: 0.9em; margin-top: 15px;">
+        Made with ❤️ | MIT License | <a href="https://github.com/Vishnukk05/AI-all-in-one-tool">GitHub Repository</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
